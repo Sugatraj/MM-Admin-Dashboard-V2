@@ -9,6 +9,7 @@ function Auth() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [otp, setOtp] = useState(["", "", "", ""]);
+  const [verifyLoading, setVerifyLoading] = useState(false);
 
   const handleOtpChange = (index, value) => {
     if (!/^\d*$/.test(value)) return;
@@ -55,6 +56,48 @@ function Auth() {
       setError(err.response?.data?.detail || "Something went wrong");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleVerifyOTP = async (e) => {
+    e.preventDefault();
+    setVerifyLoading(true);
+    setError("");
+
+    const otpString = otp.join("");
+
+    try {
+      const response = await axios.post(
+        "https://men4u.xyz/v2/admin/admin_verify_otp",
+        {
+          mobile: mobile,
+          otp: parseInt(otpString)
+        }
+      );
+
+      if (response.data.detail === "Login successful") {
+        // Store auth related data
+        const authData = {
+          access_token: response.data.access_token,
+          token_type: response.data.token_type,
+          expires_at: response.data.expires_at
+        };
+        localStorage.setItem("auth", JSON.stringify(authData));
+
+        // Store admin related data
+        const adminData = {
+          user_id: response.data.user_id,
+          name: response.data.name,
+          mobile: response.data.mobile,
+          email: response.data.email,
+          role: response.data.role
+        };
+        localStorage.setItem("adminData", JSON.stringify(adminData));
+      }
+    } catch (err) {
+      setError(err.response?.data?.detail || "Failed to verify OTP");
+    } finally {
+      setVerifyLoading(false);
     }
   };
 
@@ -277,8 +320,12 @@ function Auth() {
 
                   {/* <!-- Button --> */}
                   <div>
-                    <button class="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
-                      Verify OTP
+                    <button 
+                      onClick={handleVerifyOTP}
+                      disabled={verifyLoading || otp.some(digit => digit === "")}
+                      className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600 disabled:opacity-70"
+                    >
+                      {verifyLoading ? "Verifying..." : "Verify OTP"}
                     </button>
                   </div>
                 </div>
