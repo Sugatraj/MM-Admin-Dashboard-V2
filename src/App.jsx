@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Auth from './components/Auth';
-import Dashboard from './components/Dashboard';
+import Dashboard from './components/DashboardLayout';
 
 function App() {
 
