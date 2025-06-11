@@ -4,6 +4,8 @@ import Auth from './components/Auth';
 import PrivateRoute from './components/PrivateRoute';
 import Dashboard from './components/Dashboard';
 import Profile from './components/Profile';
+import Outlets from './components/Outlets';
+
 function App() {
   return (
     <BrowserRouter>
@@ -15,6 +17,7 @@ function App() {
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/outlets" element={<Outlets />} />
           {/* Add other protected routes here */}
         </Route>
       </Routes>
