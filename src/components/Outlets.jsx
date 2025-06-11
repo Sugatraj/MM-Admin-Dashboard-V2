@@ -4,6 +4,9 @@ import brand07 from '../assets/images/brand/brand-07.svg';
 import brand08 from '../assets/images/brand/brand-08.svg';
 import brand10 from '../assets/images/brand/brand-10.svg';
 import brand15 from '../assets/images/brand/brand-15.svg';
+import axios from 'axios';
+import { useAuth } from '../hooks/useAuth';
+import { useAdmin } from '../hooks/useAdmin';
 
 const transactionsData = [
   {
@@ -202,6 +205,11 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 };
 
 function Outlets() {
+  const { getToken } = useAuth();
+  const { adminData } = useAdmin();
+  const [outletData, setOutletData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredData, setFilteredData] = useState(transactionsData);
@@ -230,6 +238,43 @@ function Outlets() {
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
+
+  // New function to fetch outlet data
+  const fetchOutlets = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await axios.post(
+        'https://men4u.xyz/v2/common/listview_outlet',
+        {
+        //   user_id: adminData?.user_id,
+          user_id: 2,
+          app_source: 'admin_dashboard'
+        },
+        {
+          headers: {
+            Authorization: getToken(),
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      setOutletData(response.data);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to fetch outlets');
+      console.error('Error fetching outlets:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Call API when component mounts
+  useEffect(() => {
+    if (adminData?.user_id) {
+      fetchOutlets();
+    }
+  }, [adminData?.user_id]);
 
   return (
     <div className="border-t border-gray-100 p-5 sm:p-6 dark:border-gray-800">
