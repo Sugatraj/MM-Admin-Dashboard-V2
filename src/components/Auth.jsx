@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import authLogo from "../assets/images/logo/auth-logo.svg";
 import grid01 from "../assets/images/shape/grid-01.svg";
@@ -10,6 +11,8 @@ function Auth() {
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [verifyLoading, setVerifyLoading] = useState(false);
   const [isOtpSent, setIsOtpSent] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleOtpChange = (index, value) => {
     if (!/^\d*$/.test(value)) return;
@@ -97,6 +100,7 @@ function Auth() {
           role: response.data.role,
         };
         localStorage.setItem("adminData", JSON.stringify(adminData));
+        navigate("/dashboard");
       }
     } catch (err) {
       setError(err.response?.data?.detail || "Failed to verify OTP");
