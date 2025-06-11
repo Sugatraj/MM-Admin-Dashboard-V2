@@ -82,7 +82,7 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-const TableRow = ({ transaction }) => {
+const TableRow = ({ outlet }) => {
   const [showDropdown, setShowDropdown] = useState(false);
 
   return (
@@ -91,11 +91,14 @@ const TableRow = ({ transaction }) => {
         <div className="flex items-center">
           <div className="flex items-center gap-3">
             <div className="h-8 w-8">
-              <img src={transaction.image} alt="brand" />
+              <img src={outlet.image} alt="outlet" />
             </div>
             <div>
               <span className="text-theme-sm block font-medium text-gray-700 dark:text-gray-400">
-                {transaction.name}
+                {outlet.name}
+              </span>
+              <span className="text-xs text-gray-500">
+                Code: {outlet.code}
               </span>
             </div>
           </div>
@@ -104,27 +107,20 @@ const TableRow = ({ transaction }) => {
       <td className="px-5 py-3 whitespace-nowrap sm:px-6">
         <div className="flex items-center">
           <p className="text-theme-sm text-gray-700 dark:text-gray-400">
-            {transaction.date}
+            {outlet.mobile}
           </p>
         </div>
       </td>
       <td className="px-5 py-3 whitespace-nowrap sm:px-6">
         <div className="flex items-center">
           <p className="text-theme-sm text-gray-700 dark:text-gray-400">
-            {transaction.price}
+            {outlet.accountType}
           </p>
         </div>
       </td>
       <td className="px-5 py-3 whitespace-nowrap sm:px-6">
         <div className="flex items-center">
-          <p className="text-theme-sm text-gray-700 dark:text-gray-400">
-            {transaction.category}
-          </p>
-        </div>
-      </td>
-      <td className="px-5 py-3 whitespace-nowrap sm:px-6">
-        <div className="flex items-center">
-          <StatusBadge status={transaction.status} />
+          <StatusBadge status={outlet.status} />
         </div>
       </td>
       <td className="px-5 py-3 whitespace-nowrap sm:px-6">
@@ -139,10 +135,10 @@ const TableRow = ({ transaction }) => {
             {showDropdown && (
               <div className="shadow-theme-lg dark:bg-gray-dark fixed w-40 space-y-1 rounded-2xl border border-gray-200 bg-white p-2 dark:border-gray-800">
                 <button className="text-theme-xs flex w-full rounded-lg px-3 py-2 text-left font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300">
-                  View More
+                  View Details
                 </button>
                 <button className="text-theme-xs flex w-full rounded-lg px-3 py-2 text-left font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300">
-                  Delete
+                  Edit Outlet
                 </button>
               </div>
             )}
@@ -212,34 +208,30 @@ function Outlets() {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [filteredData, setFilteredData] = useState(transactionsData);
+  const [filteredData, setFilteredData] = useState([]);
   const itemsPerPage = 5;
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
-  // Handle search
-  useEffect(() => {
-    const filtered = transactionsData.filter(item =>
-      Object.values(item).some(val =>
-        val.toString().toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    );
-    setFilteredData(filtered);
-    setCurrentPage(1); // Reset to first page when searching
-  }, [searchQuery]);
-
-  // Get current items
-  const getCurrentItems = () => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return filteredData.slice(startIndex, endIndex);
+  // Transform outlet data to match UI structure
+  const transformOutletData = (outlets) => {
+    return outlets.map(outlet => ({
+      id: outlet.outlet_id,
+      name: outlet.outlet_name,           // Outlet name
+      code: outlet.outlet_code,           // Outlet code
+      mobile: outlet.mobile,              // Mobile number
+      status: getOutletStatus(outlet.outlet_status, outlet.is_open),
+      image: brand02,                     // Keep default image for now
+      accountType: outlet.account_type    // Account type
+    }));
   };
 
-  // Handle page change
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
+  // Helper function to determine status
+  const getOutletStatus = (outlet_status, is_open) => {
+    if (outlet_status === 1 && is_open === 1) return 'success';
+    if (outlet_status === 1 && is_open === 0) return 'pending';
+    return 'failed';
   };
 
-  // New function to fetch outlet data
+  // Fetch outlets from API
   const fetchOutlets = async () => {
     try {
       setLoading(true);
@@ -249,7 +241,7 @@ function Outlets() {
         'https://men4u.xyz/v2/common/listview_outlet',
         {
         //   user_id: adminData?.user_id,
-          user_id: 2,
+          user_id: 2, //HARDCODE
           app_source: 'admin_dashboard'
         },
         {
@@ -260,7 +252,11 @@ function Outlets() {
         }
       );
 
-      setOutletData(response.data);
+      if (response.data.detail === "Successfully retrieved outlets") {
+        const transformedData = transformOutletData(response.data.data);
+        setOutletData(transformedData);
+        setFilteredData(transformedData); // Initialize filtered data with all outlets
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to fetch outlets');
       console.error('Error fetching outlets:', err);
@@ -275,6 +271,43 @@ function Outlets() {
       fetchOutlets();
     }
   }, [adminData?.user_id]);
+
+  // Handle search
+  useEffect(() => {
+    if (!outletData.length) return;
+
+    const filtered = outletData.filter(item =>
+      Object.values(item).some(val =>
+        val.toString().toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
+    setFilteredData(filtered);
+    setCurrentPage(1); // Reset to first page when searching
+  }, [searchQuery, outletData]);
+
+  // Get current items
+  const getCurrentItems = () => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredData.slice(startIndex, endIndex);
+  };
+
+  // Calculate total pages based on filtered data
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+  // Handle page change
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // Update table headers to match new data structure
+  const tableHeaders = [
+    { label: "Outlet Name", key: "name" },
+    { label: "Mobile", key: "mobile" },
+    { label: "Account Type", key: "accountType" },
+    { label: "Status", key: "status" },
+    { label: "Actions", key: "actions" }
+  ];
 
   return (
     <div className="border-t border-gray-100 p-5 sm:p-6 dark:border-gray-800">
@@ -308,41 +341,20 @@ function Outlets() {
           <table className="min-w-full">
             <thead className="border-y border-gray-100 py-3 dark:border-gray-800">
               <tr>
-                <th className="py-3 pr-5 font-normal whitespace-nowrap sm:pr-6">
-                  <div className="flex items-center">
-                    <p className="text-theme-sm text-gray-500 dark:text-gray-400">Name</p>
-                  </div>
-                </th>
-                <th className="px-5 py-3 font-normal whitespace-nowrap sm:px-6">
-                  <div className="flex items-center">
-                    <p className="text-theme-sm text-gray-500 dark:text-gray-400">Date</p>
-                  </div>
-                </th>
-                <th className="px-5 py-3 font-normal whitespace-nowrap sm:px-6">
-                  <div className="flex items-center">
-                    <p className="text-theme-sm text-gray-500 dark:text-gray-400">Price</p>
-                  </div>
-                </th>
-                <th className="px-5 py-3 font-normal whitespace-nowrap sm:px-6">
-                  <div className="flex items-center">
-                    <p className="text-theme-sm text-gray-500 dark:text-gray-400">Category</p>
-                  </div>
-                </th>
-                <th className="px-5 py-3 font-normal whitespace-nowrap sm:px-6">
-                  <div className="flex items-center">
-                    <p className="text-theme-sm text-gray-500 dark:text-gray-400">Status</p>
-                  </div>
-                </th>
-                <th className="px-5 py-3 font-normal whitespace-nowrap sm:px-6">
-                  <div className="flex items-center">
-                    <p className="text-theme-sm text-gray-500 dark:text-gray-400">Actions</p>
-                  </div>
-                </th>
+                {tableHeaders.map((header) => (
+                  <th key={header.key} className="py-3 pr-5 font-normal whitespace-nowrap sm:pr-6">
+                    <div className="flex items-center">
+                      <p className="text-theme-sm text-gray-500 dark:text-gray-400">
+                        {header.label}
+                      </p>
+                    </div>
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-              {getCurrentItems().map(transaction => (
-                <TableRow key={transaction.id} transaction={transaction} />
+              {getCurrentItems().map(outlet => (
+                <TableRow key={outlet.id} outlet={outlet} />
               ))}
             </tbody>
           </table>
