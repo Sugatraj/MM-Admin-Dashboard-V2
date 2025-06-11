@@ -8,6 +8,31 @@ function Auth() {
   const [mobile, setMobile] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [otp, setOtp] = useState(["", "", "", ""]);
+
+  const handleOtpChange = (index, value) => {
+    if (!/^\d*$/.test(value)) return;
+
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+
+    if (value !== "" && index < 3) {
+      const nextInput = document.querySelector(`input.otp-input[data-index="${index + 1}"]`);
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
+  };
+
+  const handleKeyDown = (index, e) => {
+    if (e.key === "Backspace" && otp[index] === "" && index > 0) {
+      const prevInput = document.querySelector(`input.otp-input[data-index="${index - 1}"]`);
+      if (prevInput) {
+        prevInput.focus();
+      }
+    }
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -216,6 +241,56 @@ function Auth() {
                 </div>
               </div>
             </div>
+            <div class="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
+            <div class="mb-5 sm:mb-8">
+              <h1 class="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
+                Verify OTP
+              </h1>
+              <p class="text-sm text-gray-500 dark:text-gray-400">
+                A verification code has been sent to your mobile. Please enter
+                it in the field below.
+              </p>
+            </div>
+            <div>
+              <div>
+                <div class="space-y-5">
+                  {/* <!-- Email --> */}
+                  <div>
+                    <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                      Type your 4 digits security code
+                    </label>
+                    <div className="flex gap-2 sm:gap-4" id="otp-container">
+                      {[0, 1, 2, 3].map((index) => (
+                        <input
+                          key={index}
+                          type="text"
+                          maxLength="1"
+                          data-index={index}
+                          value={otp[index]}
+                          onChange={(e) => handleOtpChange(index, e.target.value)}
+                          onKeyDown={(e) => handleKeyDown(index, e)}
+                          className="dark:bg-dark-900 otp-input h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-center text-xl font-semibold text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* <!-- Button --> */}
+                  <div>
+                    <button class="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
+                      Verify OTP
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-5">
+                <p class="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
+                  Didn't get the code?
+                  <a href="#" class="text-brand-500 hover:text-brand-600 dark:text-brand-400 pl-2">Resend</a>
+                </p>
+              </div>
+            </div>
+          </div>
           </div>
 
           <div className="relative items-center hidden w-full h-full bg-brand-950 dark:bg-white/5 lg:grid lg:w-1/2">
