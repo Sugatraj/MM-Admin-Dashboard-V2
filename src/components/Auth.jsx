@@ -82,7 +82,7 @@ function Auth() {
                     {/* <!-- Checkbox --> */}
                     <div className="flex items-center justify-between">
                       <div x-data="{ checkboxToggle: false }">
-                        <label for="checkboxLabelOne" className="flex items-center text-sm font-normal text-gray-700 cursor-pointer select-none dark:text-gray-400">
+                        <label htmlFor="checkboxLabelOne" className="flex items-center text-sm font-normal text-gray-700 cursor-pointer select-none dark:text-gray-400">
                           <div className="relative">
                             <input type="checkbox" id="checkboxLabelOne" className="sr-only" />
                             <div className="checkboxToggle ? 'border-brand-500 bg-brand-500' : 'bg-transparent border-gray-300 dark:border-gray-700'" className="mr-3 flex h-5 w-5 items-center justify-center rounded-md border-[1.25px] bg-transparent border-gray-300 dark:border-gray-700">
