@@ -97,34 +97,38 @@ const TableRow = ({ outlet }) => {
               <span className="text-theme-sm block font-medium text-gray-700 dark:text-gray-400">
                 {outlet.name}
               </span>
-              <span className="text-xs text-gray-500">
-                Code: {outlet.code}
-              </span>
             </div>
           </div>
         </div>
       </td>
       <td className="px-5 py-3 whitespace-nowrap sm:px-6">
-        <div className="flex items-center">
+        <div className="flex items-center justify-center">
+          <p className="text-theme-sm text-gray-700 dark:text-gray-400">
+            {outlet.code}
+          </p>
+        </div>
+      </td>
+      <td className="px-5 py-3 whitespace-nowrap sm:px-6">
+        <div className="flex items-center justify-center">
           <p className="text-theme-sm text-gray-700 dark:text-gray-400">
             {outlet.mobile}
           </p>
         </div>
       </td>
       <td className="px-5 py-3 whitespace-nowrap sm:px-6">
-        <div className="flex items-center">
+        <div className="flex items-center justify-center">
           <p className="text-theme-sm text-gray-700 dark:text-gray-400">
             {outlet.accountType}
           </p>
         </div>
       </td>
       <td className="px-5 py-3 whitespace-nowrap sm:px-6">
-        <div className="flex items-center">
+        <div className="flex items-center justify-center">
           <StatusBadge status={outlet.status} />
         </div>
       </td>
       <td className="px-5 py-3 whitespace-nowrap sm:px-6">
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center justify-center">
           <div className="relative">
             <button 
               onClick={() => setShowDropdown(!showDropdown)} 
@@ -303,6 +307,7 @@ function Outlets() {
   // Update table headers to match new data structure
   const tableHeaders = [
     { label: "Outlet Name", key: "name" },
+    { label: "Outlet Code", key: "code" },
     { label: "Mobile", key: "mobile" },
     { label: "Account Type", key: "accountType" },
     { label: "Status", key: "status" },
@@ -343,7 +348,7 @@ function Outlets() {
               <tr>
                 {tableHeaders.map((header) => (
                   <th key={header.key} className="py-3 pr-5 font-normal whitespace-nowrap sm:pr-6">
-                    <div className="flex items-center">
+                    <div className="flex items-center justify-center">
                       <p className="text-theme-sm text-gray-500 dark:text-gray-400">
                         {header.label}
                       </p>
