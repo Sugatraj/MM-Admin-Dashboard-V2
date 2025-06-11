@@ -277,7 +277,7 @@ function Auth() {
             </div>
           </div>
           {/* <!-- Toggler --> */}
-          <div className="fixed z-50 bottom-6 right-6">
+          {/* <div className="fixed z-50 bottom-6 right-6">
             <button className="inline-flex items-center justify-center text-white transition-colors rounded-full size-14 bg-brand-500 hover:bg-brand-600">
               <svg
                 className="hidden fill-current dark:block"
@@ -308,7 +308,7 @@ function Auth() {
                 ></path>
               </svg>
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </>
