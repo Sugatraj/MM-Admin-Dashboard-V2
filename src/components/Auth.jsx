@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
+import authLogo from "../assets/images/logo/auth-logo.svg";
+import grid01 from "../assets/images/shape/grid-01.svg";
+
 
 function Auth() {
   const [mobile, setMobile] = useState("");
@@ -36,7 +39,7 @@ function Auth() {
         <div className="relative flex flex-col justify-center w-full h-screen dark:bg-gray-900 sm:p-0 lg:flex-row">
           {/* <!-- Form --> */}
           <div className="flex flex-col flex-1 w-full lg:w-1/2">
-            <div className="w-full max-w-md pt-10 mx-auto">
+            {/* <div className="w-full max-w-md pt-10 mx-auto">
               <a
                 href="index.html"
                 className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
@@ -59,19 +62,19 @@ function Auth() {
                 </svg>
                 Back to dashboard
               </a>
-            </div>
+            </div> */}
             <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
               <div>
                 <div className="mb-5 sm:mb-8">
                   <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
-                    Sign In
+                    Login In
                   </h1>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Enter your email and password to sign in!
+                    Enter your email sign in!
                   </p>
                 </div>
                 <div>
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
+                  {/* <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
                     <button className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
                       <svg
                         width="20"
@@ -112,8 +115,8 @@ function Auth() {
                       </svg>
                       Sign in with X
                     </button>
-                  </div>
-                  <div className="relative py-3 sm:py-5">
+                  </div> */}
+                  {/* <div className="relative py-3 sm:py-5">
                     <div className="absolute inset-0 flex items-center">
                       <div className="w-full border-t border-gray-200 dark:border-gray-800"></div>
                     </div>
@@ -122,7 +125,7 @@ function Auth() {
                         Or
                       </span>
                     </div>
-                  </div>
+                  </div> */}
                   <form onSubmit={handleLogin}>
                     <div className="space-y-5">
                       {/* <!-- Mobile --> */}
@@ -142,7 +145,7 @@ function Auth() {
                         />
                       </div>
                       {/* <!-- Checkbox --> */}
-                      <div className="flex items-center justify-between">
+                      {/* <div className="flex items-center justify-between">
                         <div x-data="{ checkboxToggle: false }">
                           <label
                             htmlFor="checkboxLabelOne"
@@ -186,7 +189,7 @@ function Auth() {
                         >
                           Forgot password?
                         </a>
-                      </div>
+                      </div> */}
                       {/* <!-- Button --> */}
                       <div>
                         <button
@@ -199,7 +202,7 @@ function Auth() {
                       </div>
                     </div>
                   </form>
-                  <div className="mt-5">
+                  {/* <div className="mt-5">
                     <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
                       Don't have an account?
                       <a
@@ -209,7 +212,7 @@ function Auth() {
                         Sign Up
                       </a>
                     </p>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -219,19 +222,19 @@ function Auth() {
             <div className="flex items-center justify-center z-1">
               {/* <!-- ===== Common Grid Shape Start ===== --> */}
               <div className="absolute right-0 top-0 -z-1 w-full max-w-[250px] xl:max-w-[450px]">
-                <img src="src/images/shape/grid-01.svg" alt="grid" />
+                <img src={grid01} alt="grid" />
               </div>
               <div className="absolute bottom-0 left-0 -z-1 w-full max-w-[250px] rotate-180 xl:max-w-[450px]">
-                <img src="src/images/shape/grid-01.svg" alt="grid" />
+                <img src={grid01} alt="grid" />
               </div>
 
               <div className="flex flex-col items-center max-w-xs">
                 <a href="index.html" className="block mb-4">
-                  <img src="src/images/logo/auth-logo.svg" alt="Logo" />
+                  <img src={authLogo} alt="Logo" />
                 </a>
-                <p className="text-center text-gray-400 dark:text-white/60">
+                {/* <p className="text-center text-gray-400 dark:text-white/60">
                   Free and Open-Source Tailwind CSS Admin Dashboard Template
-                </p>
+                </p> */}
               </div>
             </div>
           </div>
