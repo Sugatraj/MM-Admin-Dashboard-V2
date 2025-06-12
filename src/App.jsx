@@ -16,6 +16,8 @@ import Partners from './components/Partner/Partners';
 import PartnerDetails from './components/Partner/PartnerDetails';
 import EditPartner from './components/Partner/EditPartner';
 import CreatePartner from './components/Partner/CreatePartner';
+import Functionalities from './components/AccessControl/Functionalities/Functionalities';
+import Roles from './components/AccessControl/Roles/Roles';
 
 function App() {
   return (
@@ -40,6 +42,8 @@ function App() {
           <Route path="/partner-details/:partnerId" element={<PartnerDetails />} />
           <Route path="/edit-partner/:partnerId" element={<EditPartner />} />
           <Route path="/create-partner" element={<CreatePartner />} />
+          <Route path="/functionalities" element={<Functionalities />} />
+          <Route path="/roles" element={<Roles />} />
           {/* Add other protected routes here */}
         </Route>
       </Routes>

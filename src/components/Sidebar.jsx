@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faGrip,
@@ -17,6 +17,7 @@ import {
   faFileInvoice,
   faEllipsis,
   faChevronDown,
+  faSignOut,
 } from "@fortawesome/free-solid-svg-icons";
 
 // Import your logo images
@@ -60,8 +61,8 @@ const menuData = {
       title: "Access Control",
       icon: faGrip,
       items: [
-        { name: "Roles", path: "/", id: "ecommerce" },
-        { name: "Functionalities", path: "/analytics", id: "analytics" },
+        { name: "Roles", path: "/roles" },
+        { name: "Functionalities", path: "/functionalities" },
       ],
     },
     {
@@ -83,43 +84,44 @@ const menuData = {
       icon: faUser,
     },
   ],
-  Support: [
-    {
-      title: "Chat",
-      path: "/chat",
-      id: "chat",
-      icon: faComments,
-    },
-    {
-      title: "Email",
-      icon: faEnvelope,
-      items: [
-        { name: "Inbox", path: "/inbox", id: "inbox", pro: true },
-        {
-          name: "Details",
-          path: "/inbox-details",
-          id: "inboxDetails",
-          pro: true,
-        },
-      ],
-    },
-  ],
-  Others: [
-    {
-      title: "Charts",
-      icon: faChartPie,
-      items: [
-        { name: "Line Chart", path: "/line-chart", id: "lineChart", pro: true },
-        { name: "Bar Chart", path: "/bar-chart", id: "barChart", pro: true },
-        { name: "Pie Chart", path: "/pie-chart", id: "pieChart", pro: true },
-      ],
-    },
-  ],
+//   Support: [
+//     {
+//       title: "Chat",
+//       path: "/chat",
+//       id: "chat",
+//       icon: faComments,
+//     },
+//     {
+//       title: "Email",
+//       icon: faEnvelope,
+//       items: [
+//         { name: "Inbox", path: "/inbox", id: "inbox", pro: true },
+//         {
+//           name: "Details",
+//           path: "/inbox-details",
+//           id: "inboxDetails",
+//           pro: true,
+//         },
+//       ],
+//     },
+//   ],
+//   Others: [
+//     {
+//       title: "Charts",
+//       icon: faChartPie,
+//       items: [
+//         { name: "Line Chart", path: "/line-chart", id: "lineChart", pro: true },
+//         { name: "Bar Chart", path: "/bar-chart", id: "barChart", pro: true },
+//         { name: "Pie Chart", path: "/pie-chart", id: "pieChart", pro: true },
+//       ],
+//     },
+//   ],
 };
 
 const Sidebar = ({ sidebarToggle = false }) => {
   const [selected, setSelected] = useState("Dashboard");
   const [page, setPage] = useState("ecommerce");
+  const navigate = useNavigate();
 
   const MenuGroup = ({ title, items }) => (
     <div>
@@ -225,10 +227,14 @@ const Sidebar = ({ sidebarToggle = false }) => {
     );
   };
 
+  const handleLogout = () => {
+    navigate('/login');
+  };
+
   return (
     <aside
       className={`sidebar fixed top-0 left-0 z-9999 flex h-screen w-[290px] flex-col overflow-y-auto 
-                      border-r border-gray-200 bg-white px-5 transition-all duration-300 
+                      border-r border-gray-200 bg-white px-5 transition-all duration-300 relative
                       ${
                         sidebarToggle
                           ? "translate-x-0 lg:w-[90px]"
@@ -264,8 +270,23 @@ const Sidebar = ({ sidebarToggle = false }) => {
         </nav>
       </div>
 
+      {/* Move the Logout Button to be fixed at bottom */}
+      <div className="absolute bottom-0 left-0 right-0 px-5 py-4 bg-white border-t border-gray-200 dark:bg-black dark:border-gray-800">
+        <button
+          onClick={handleLogout}
+          className={`w-full inline-flex items-center gap-2 px-4 py-3 text-sm font-medium text-error-500 hover:text-error-600 transition rounded-lg ${
+            sidebarToggle ? "justify-center" : "justify-start"
+          }`}
+        >
+          <FontAwesomeIcon icon={faSignOut} className="w-5 h-5" />
+          <span className={`${sidebarToggle ? "lg:hidden" : ""}`}>
+            Sign out
+          </span>
+        </button>
+      </div>
+
       {/* Promo Box */}
-      <div
+      {/* <div
         className={`mx-auto mb-10 w-full max-w-60 rounded-2xl bg-gray-50 px-4 py-5 text-center 
                       dark:bg-white/[0.03] ${sidebarToggle ? "lg:hidden" : ""}`}
       >
@@ -284,7 +305,9 @@ const Sidebar = ({ sidebarToggle = false }) => {
         >
           Purchase Plan
         </a>
-      </div>
+      </div> */}
+
+       
     </aside>
   );
 };
