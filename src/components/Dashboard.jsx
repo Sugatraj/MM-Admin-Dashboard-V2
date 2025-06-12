@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
   const { getToken, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [data, setData] = useState({
     outlet_data: [],
     counts: {
@@ -15,35 +17,39 @@ function Dashboard() {
   });
 
   useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const token = getToken();
+        if (!token) {
+          throw new Error('No authentication token available');
+        }
+
+        const response = await fetch('https://men4u.xyz/v2/admin/admin_home', {
+          method: 'GET',
+          headers: {
+            'Authorization': token,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch dashboard data');
+        }
+
+        const jsonData = await response.json();
+        setData(jsonData);
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      }
+    };
+
     if (isAuthenticated()) {
       fetchDashboardData();
     }
-  }, [isAuthenticated]);
+  }, []);
 
-  const fetchDashboardData = async () => {
-    try {
-      const token = getToken();
-      if (!token) {
-        throw new Error('No authentication token available');
-      }
-
-      const response = await fetch('https://men4u.xyz/v2/admin/admin_home', {
-        method: 'GET',
-        headers: {
-          'Authorization': token,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch dashboard data');
-      }
-
-      const jsonData = await response.json();
-      setData(jsonData);
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-    }
+  const handleEditClick = (outlet) => {
+    navigate(`/edit-outlet/${outlet.outlet_id}`);
   };
 
   return (
@@ -160,7 +166,11 @@ function Dashboard() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex gap-2">
-                      <button className="p-1 text-orange-600 hover:bg-orange-50 rounded">
+                      <button 
+                        onClick={() => handleEditClick(outlet)}
+                        className="p-1 text-orange-600 hover:bg-orange-50 rounded"
+                        title="Edit Outlet"
+                      >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                         </svg>
