@@ -114,7 +114,7 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-const TableRow = ({ outlet, handleViewOutlet }) => {
+const TableRow = ({ outlet, handleViewOutlet, handleEditOutlet }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   console.log(outlet);
   console.log(handleViewOutlet);
@@ -190,6 +190,7 @@ const TableRow = ({ outlet, handleViewOutlet }) => {
           <button 
             className="w-8 h-8 flex items-center justify-center text-white bg-warning-500 hover:bg-warning-600 rounded-lg shadow-theme-xs transition"
             title="Edit Outlet"
+            onClick={() => handleEditOutlet(outlet.id)}
           >
             <FontAwesomeIcon icon={faPenToSquare} className="w-4 h-4" />
           </button>
@@ -377,6 +378,10 @@ function Outlets() {
     navigate(`/view-outlet/${outletId}`);
   };
 
+  const handleEditOutlet = (outlet_id) => {
+    navigate(`/edit-outlet/${outlet_id}`);
+  };
+
   return (
     <div className="border-t border-gray-100 p-5 sm:p-6 dark:border-gray-800">
       <div className="rounded-2xl border border-gray-200 bg-white pt-4 dark:border-gray-800 dark:bg-white/[0.03]">
@@ -448,6 +453,7 @@ function Outlets() {
                   key={outlet.id} 
                   outlet={outlet} 
                   handleViewOutlet={handleViewOutlet}
+                  handleEditOutlet={handleEditOutlet}
                 />
               ))}
             </tbody>
