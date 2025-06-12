@@ -299,8 +299,8 @@ function Outlets() {
       const response = await axios.post(
         "https://men4u.xyz/v2/common/listview_outlet",
         {
-          //   user_id: adminData?.user_id,
-          user_id: 2, //HARDCODE
+            user_id: adminData?.user_id,
+        //   user_id: 2, //HARDCODE
           app_source: "admin_dashboard",
         },
         {
