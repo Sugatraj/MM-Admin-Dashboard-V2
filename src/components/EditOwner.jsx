@@ -101,12 +101,10 @@ function EditOwner() {
       );
 
       if (response.data.detail === "Owner updated successfully") {
-        alert('Owner updated successfully');
         navigate(-1);
       }
     } catch (error) {
       console.error('Error updating owner:', error);
-      alert(error.response?.data?.detail || 'Error updating owner');
     }
   };
 
