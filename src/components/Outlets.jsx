@@ -179,15 +179,15 @@ const TableRow = ({ outlet }) => {
         <div className="flex items-center justify-center gap-2">
           {/* View Button - Blue */}
           <button 
-            className="p-2 text-white bg-brand-500 hover:bg-brand-600 rounded-lg shadow-theme-xs transition"
+            className="w-8 h-8 flex items-center justify-center text-white bg-brand-500 hover:bg-brand-600 rounded-lg shadow-theme-xs transition"
             title="View Details"
           >
             <FontAwesomeIcon icon={faEye} className="w-4 h-4" />
           </button>
 
-          {/* Edit Button - Green */}
+          {/* Edit Button - Yellow/Warning */}
           <button 
-            className="p-2 text-white bg-warning-500 hover:bg-warning-600 rounded-lg shadow-theme-xs transition"
+            className="w-8 h-8 flex items-center justify-center text-white bg-warning-500 hover:bg-warning-600 rounded-lg shadow-theme-xs transition"
             title="Edit Outlet"
           >
             <FontAwesomeIcon icon={faPenToSquare} className="w-4 h-4" />
@@ -195,7 +195,7 @@ const TableRow = ({ outlet }) => {
 
           {/* Delete Button - Red */}
           <button 
-            className="p-2 text-white bg-error-500 hover:bg-error-500 rounded-lg shadow-theme-xs transition"
+            className="w-8 h-8 flex items-center justify-center text-white bg-error-500 hover:bg-error-600 rounded-lg shadow-theme-xs transition"
             title="Delete Outlet"
           >
             <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
