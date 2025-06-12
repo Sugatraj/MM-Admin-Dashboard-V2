@@ -11,6 +11,7 @@ function OwnerDetails() {
   const navigate = useNavigate();
   const [ownerData, setOwnerData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     if (adminData?.user_id && ownerId) {
@@ -44,6 +45,33 @@ function OwnerDetails() {
     } catch (error) {
       console.error('Error fetching owner details:', error);
       setIsLoading(false);
+    }
+  };
+
+  const handleDeleteOwner = async () => {
+    try {
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token available');
+      }
+
+      await axios.delete(
+        'https://men4u.xyz/v2/admin/delete_owner',
+        {
+          data: {
+            owner_id: parseInt(ownerId),
+            user_id: adminData.user_id
+          },
+          headers: {
+            Authorization: token,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      navigate(-1);
+    } catch (error) {
+      console.error('Error deleting owner:', error);
     }
   };
 
@@ -95,11 +123,7 @@ function OwnerDetails() {
             Edit
           </button>
           <button 
-            onClick={() => {
-              if (window.confirm('Are you sure you want to delete this owner?')) {
-                // Add delete API call here
-              }
-            }}
+            onClick={() => setShowDeleteModal(true)}
             className="inline-flex items-center gap-2 px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-error-500 shadow-theme-xs hover:bg-error-600"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -109,6 +133,59 @@ function OwnerDetails() {
           </button>
         </div>
       </div>
+
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50">
+          <div className="flex items-center justify-center min-h-screen">
+            {/* Backdrop */}
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75" onClick={() => setShowDeleteModal(false)} />
+
+            {/* Modal */}
+            <div className="relative bg-white rounded-lg w-[400px] z-50">
+              <div className="p-6">
+                {/* Header */}
+                <div className="flex items-start">
+                  <div className="flex-shrink-0">
+                    <svg className="w-6 h-6 text-error-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                  </div>
+                  <div className="ml-4">
+                    <h3 className="text-lg font-medium text-gray-900">
+                      Confirm Deletion
+                    </h3>
+                    <div className="mt-2">
+                      <p className="text-sm text-gray-500">
+                        Are you sure you want to delete this owner? This action
+                        cannot be undone. All data associated with this owner will
+                        be permanently removed.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Buttons */}
+                <div className="mt-6 flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowDeleteModal(false)}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDeleteOwner}
+                    className="px-4 py-2 text-sm font-medium text-white bg-error-500 rounded-lg hover:bg-error-600 focus:outline-none"
+                  >
+                    Delete Owner
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Personal Information */}
@@ -167,7 +244,7 @@ function OwnerDetails() {
             <div className="flex items-center">
               <div className="w-8 h-8 flex items-center justify-center">
                 <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </div>
               <div className="ml-3">
