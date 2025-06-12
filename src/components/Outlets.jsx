@@ -119,11 +119,8 @@ const TableRow = ({ outlet }) => {
   return (
     <tr>
       <td className="py-3 pr-5 whitespace-nowrap sm:pr-6">
-        <div className="flex items-center">
+        <div className="flex items-center justify-center">
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8">
-              <img src={outlet.image} alt="outlet" />
-            </div>
             <div>
               <span className="text-theme-sm block font-medium text-gray-700 dark:text-gray-400">
                 {outlet.name}
