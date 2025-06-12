@@ -78,44 +78,56 @@ const menuData = {
       icon: faCalendar,
     },
     {
+      title: "Search",
+      path: "/search",
+      id: "search",
+      icon: faUser,
+    },
+    {
+      title: "Tickets",
+      path: "/tickets",
+      id: "tickets",
+      icon: faUser,
+    },
+    {
       title: "My Profile",
       path: "/profile",
       id: "profile",
       icon: faUser,
     },
   ],
-//   Support: [
-//     {
-//       title: "Chat",
-//       path: "/chat",
-//       id: "chat",
-//       icon: faComments,
-//     },
-//     {
-//       title: "Email",
-//       icon: faEnvelope,
-//       items: [
-//         { name: "Inbox", path: "/inbox", id: "inbox", pro: true },
-//         {
-//           name: "Details",
-//           path: "/inbox-details",
-//           id: "inboxDetails",
-//           pro: true,
-//         },
-//       ],
-//     },
-//   ],
-//   Others: [
-//     {
-//       title: "Charts",
-//       icon: faChartPie,
-//       items: [
-//         { name: "Line Chart", path: "/line-chart", id: "lineChart", pro: true },
-//         { name: "Bar Chart", path: "/bar-chart", id: "barChart", pro: true },
-//         { name: "Pie Chart", path: "/pie-chart", id: "pieChart", pro: true },
-//       ],
-//     },
-//   ],
+  //   Support: [
+  //     {
+  //       title: "Chat",
+  //       path: "/chat",
+  //       id: "chat",
+  //       icon: faComments,
+  //     },
+  //     {
+  //       title: "Email",
+  //       icon: faEnvelope,
+  //       items: [
+  //         { name: "Inbox", path: "/inbox", id: "inbox", pro: true },
+  //         {
+  //           name: "Details",
+  //           path: "/inbox-details",
+  //           id: "inboxDetails",
+  //           pro: true,
+  //         },
+  //       ],
+  //     },
+  //   ],
+  //   Others: [
+  //     {
+  //       title: "Charts",
+  //       icon: faChartPie,
+  //       items: [
+  //         { name: "Line Chart", path: "/line-chart", id: "lineChart", pro: true },
+  //         { name: "Bar Chart", path: "/bar-chart", id: "barChart", pro: true },
+  //         { name: "Pie Chart", path: "/pie-chart", id: "pieChart", pro: true },
+  //       ],
+  //     },
+  //   ],
 };
 
 const Sidebar = ({ sidebarToggle = false }) => {
@@ -228,7 +240,7 @@ const Sidebar = ({ sidebarToggle = false }) => {
   };
 
   const handleLogout = () => {
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
@@ -306,8 +318,6 @@ const Sidebar = ({ sidebarToggle = false }) => {
           Purchase Plan
         </a>
       </div> */}
-
-       
     </aside>
   );
 };
