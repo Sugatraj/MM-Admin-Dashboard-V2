@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import axios from 'axios';
+import { useAdmin } from '../hooks/useAdmin';
 
 function CreateOutlet() {
   const navigate = useNavigate();
   const { getToken } = useAuth();
+  const { adminData } = useAdmin();
   const [outletTypes, setOutletTypes] = useState({});
   const [foodTypes, setFoodTypes] = useState({});
   
@@ -117,7 +119,74 @@ function CreateOutlet() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // API integration will be added later
+    try {
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token available');
+      }
+
+      // Updated formatDateTime function to match required format
+      const formatDateTime = (timeString) => {
+        if (!timeString) return '';
+        const [hours, minutes] = timeString.split(':');
+        const hour = parseInt(hours);
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        const formattedHour = hour % 12 || 12; // Convert 24h to 12h format
+        return `2024-01-01 ${formattedHour.toString().padStart(2, '0')}:${minutes}:00 ${ampm}`;
+      };
+
+      const formDataToSend = new FormData();
+      
+      // Required fields from the form
+      formDataToSend.append('owner_id', '142');
+      formDataToSend.append('user_id', adminData.user_id.toString());
+      formDataToSend.append('name', formData.name);
+      formDataToSend.append('mobile', formData.mobile);
+      formDataToSend.append('address', formData.address);
+      formDataToSend.append('outlet_type', formData.outlet_type);
+      formDataToSend.append('veg_nonveg', formData.veg_nonveg);
+      formDataToSend.append('service_charges', formData.service_charges || '0');
+      formDataToSend.append('gst', formData.gst || '0');
+      formDataToSend.append('upi_id', formData.upi_id);
+
+      // Optional fields
+      if (formData.fssainumber) formDataToSend.append('fssainumber', formData.fssainumber);
+      if (formData.gstnumber) formDataToSend.append('gstnumber', formData.gstnumber);
+      if (formData.whatsapp) formDataToSend.append('whatsapp', formData.whatsapp);
+      if (formData.facebook) formDataToSend.append('facebook', formData.facebook);
+      if (formData.instagram) formDataToSend.append('instagram', formData.instagram);
+      if (formData.website) formDataToSend.append('website', formData.website);
+      
+      // Format and append times with AM/PM
+      if (formData.opening_time) {
+        formDataToSend.append('opening_time', formatDateTime(formData.opening_time));
+      }
+      if (formData.closing_time) {
+        formDataToSend.append('closing_time', formatDateTime(formData.closing_time));
+      }
+
+      // Append image if selected
+      if (imageFile) {
+        formDataToSend.append('image', imageFile);
+      }
+
+      const response = await axios.post(
+        'https://men4u.xyz/v2/admin/create_outlet',
+        formDataToSend,
+        {
+          headers: {
+            'Authorization': token,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      if (response.data.detail === "Outlet created successfully") {
+        navigate(-1);
+      }
+    } catch (error) {
+      console.error('Error creating outlet:', error);
+    }
   };
 
   return (
