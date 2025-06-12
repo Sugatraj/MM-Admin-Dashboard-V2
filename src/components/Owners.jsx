@@ -46,6 +46,10 @@ function Owners() {
     navigate(`/owner-details/${owner_id}`);
   };
 
+  const handleEditOwner = (owner_id) => {
+    navigate(`/edit-owner/${owner_id}`);
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -113,6 +117,7 @@ function Owners() {
                       <button 
                         className="p-1 text-orange-600 hover:bg-orange-50 rounded"
                         title="Edit Owner"
+                        onClick={() => handleEditOwner(owner.user_id)}
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
