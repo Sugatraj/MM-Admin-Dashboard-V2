@@ -18,6 +18,12 @@ import EditPartner from './components/Partner/EditPartner';
 import CreatePartner from './components/Partner/CreatePartner';
 import Functionalities from './components/AccessControl/Functionalities/Functionalities';
 import Roles from './components/AccessControl/Roles/Roles';
+import QRTemplates from './components/QRTemplate/QRTemplates';
+import CreateTemplate from './components/QRTemplate/CreateTemplate';
+import TemplateDetails from './components/QRTemplate/TemplateDetails';
+import EditTemplate from './components/QRTemplate/EditTemplate';
+import Tickets from './components/Ticket/Tickets';
+import Search from './components/Search/Search';
 
 function App() {
   return (
@@ -44,6 +50,12 @@ function App() {
           <Route path="/create-partner" element={<CreatePartner />} />
           <Route path="/functionalities" element={<Functionalities />} />
           <Route path="/roles" element={<Roles />} />
+          <Route path="/qr-templates" element={<QRTemplates />} />
+          <Route path="/create-template" element={<CreateTemplate />} />
+          <Route path="/template-details/:templateId" element={<TemplateDetails />} />
+          <Route path="/edit-template/:templateId" element={<EditTemplate />} />
+          <Route path="/tickets" element={<Tickets />} />
+          <Route path="/search" element={<Search />} />
           {/* Add other protected routes here */}
         </Route>
       </Routes>
