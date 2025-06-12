@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useAdmin } from '../hooks/useAdmin';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function Owners() {
   const { getToken } = useAuth();
   const { adminData } = useAdmin();
   const [owners, setOwners] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (adminData?.user_id) {
@@ -38,6 +40,10 @@ function Owners() {
       console.error('Error fetching owners:', error);
       setIsLoading(false);
     }
+  };
+
+  const handleViewOwner = (owner_id) => {
+    navigate(`/owner-details/${owner_id}`);
   };
 
   if (isLoading) {
@@ -112,6 +118,7 @@ function Owners() {
                       <button 
                         className="p-1 text-blue-600 hover:bg-blue-50 rounded"
                         title="View Owner"
+                        onClick={() => handleViewOwner(owner.user_id)}
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
