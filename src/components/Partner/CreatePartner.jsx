@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-function EditPartner() {
+function CreatePartner() {
   const navigate = useNavigate();
-  const { partnerId } = useParams();
   const [formData, setFormData] = useState({
     name: '',
     mobile: '',
@@ -12,11 +11,6 @@ function EditPartner() {
     aadhar: '',
     address: ''
   });
-
-  useEffect(() => {
-    // Fetch partner data when component mounts
-    // This will be implemented later with API integration
-  }, [partnerId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,7 +41,7 @@ function EditPartner() {
         </button>
       </div>
 
-      <h1 className="text-2xl font-semibold mb-6">Edit Partner</h1>
+      <h1 className="text-2xl font-semibold mb-6">Create Partner</h1>
 
       <form onSubmit={handleSubmit} className="max-w-3xl space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -165,9 +159,9 @@ function EditPartner() {
             className="inline-flex items-center gap-2 px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
-            Save Changes
+            Create Partner
           </button>
         </div>
       </form>
@@ -175,4 +169,4 @@ function EditPartner() {
   );
 }
 
-export default EditPartner;
+export default CreatePartner;

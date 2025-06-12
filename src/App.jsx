@@ -15,6 +15,8 @@ import CreateOwner from './components/CreateOwner';
 import Partners from './components/Partner/Partners';
 import PartnerDetails from './components/Partner/PartnerDetails';
 import EditPartner from './components/Partner/EditPartner';
+import CreatePartner from './components/Partner/CreatePartner';
+
 function App() {
   return (
     <BrowserRouter>
@@ -37,6 +39,7 @@ function App() {
           <Route path="/partners" element={<Partners />} />
           <Route path="/partner-details/:partnerId" element={<PartnerDetails />} />
           <Route path="/edit-partner/:partnerId" element={<EditPartner />} />
+          <Route path="/create-partner" element={<CreatePartner />} />
           {/* Add other protected routes here */}
         </Route>
       </Routes>
