@@ -114,7 +114,7 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-const TableRow = ({ outlet, handleViewOutlet, handleEditOutlet }) => {
+const TableRow = ({ outlet, handleViewOutlet, handleEditOutlet, onDeleteClick }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   console.log(outlet);
   console.log(handleViewOutlet);
@@ -199,6 +199,7 @@ const TableRow = ({ outlet, handleViewOutlet, handleEditOutlet }) => {
           <button 
             className="w-8 h-8 flex items-center justify-center text-white bg-error-500 hover:bg-error-600 rounded-lg shadow-theme-xs transition"
             title="Delete Outlet"
+            onClick={() => onDeleteClick(outlet)}
           >
             <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
           </button>
@@ -310,6 +311,8 @@ function Outlets() {
   const [filteredData, setFilteredData] = useState([]);
   const itemsPerPage = 10;
   const navigate = useNavigate();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [outletToDelete, setOutletToDelete] = useState(null);
 
   // Transform outlet data to match UI structure
   const transformOutletData = (outlets) => {
@@ -422,6 +425,39 @@ function Outlets() {
     navigate(`/edit-outlet/${outlet_id}`);
   };
 
+  const handleDeleteClick = (outlet) => {
+    setOutletToDelete(outlet);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteOutlet = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.delete(
+        "https://men4u.xyz/v2/admin/delete_outlet",
+        {
+          headers: {
+            Authorization: getToken(),
+            "Content-Type": "application/json",
+          },
+          data: {
+            outlet_id: outletToDelete.id,
+            user_id: adminData?.user_id,
+          },
+        }
+      );
+
+      if (response.data.detail === "Outlet deleted successfully") {
+        setShowDeleteModal(false);
+        fetchOutlets(); // Refresh the outlets list
+      }
+    } catch (err) {
+      console.error("Error deleting outlet:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="border-t border-gray-100 p-5 sm:p-6 dark:border-gray-800">
       <div className="rounded-2xl border border-gray-200 bg-white pt-4 dark:border-gray-800 dark:bg-white/[0.03]">
@@ -497,6 +533,7 @@ function Outlets() {
                   outlet={outlet} 
                   handleViewOutlet={handleViewOutlet}
                   handleEditOutlet={handleEditOutlet}
+                  onDeleteClick={handleDeleteClick}
                 />
               ))}
             </tbody>
@@ -509,6 +546,62 @@ function Outlets() {
           onPageChange={handlePageChange}
         />
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <>
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-gray-900 bg-opacity-50 z-40 backdrop-blur-sm"
+            onClick={() => setShowDeleteModal(false)}
+          />
+
+          {/* Modal Container */}
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            {/* Modal Content */}
+            <div className="relative w-[400px] rounded-lg bg-white shadow-xl mx-4">
+              <div className="p-6">
+                {/* Header with Warning Icon */}
+                <div className="flex flex-col items-center text-center">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-error-100 mb-4">
+                    <svg className="h-6 w-6 text-error-600" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                    </svg>
+                  </div>
+
+                  {/* Content */}
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      Confirm Deletion
+                    </h3>
+                    <p className="text-sm text-gray-500">
+                      Are you sure you want to delete outlet "{outletToDelete?.name}"? This action cannot be undone. All data associated with this outlet will be permanently removed.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Buttons */}
+                <div className="mt-6 flex justify-center gap-3">
+                  <button
+                    type="button"
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none min-w-[100px]"
+                    onClick={() => setShowDeleteModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    className="px-4 py-2 text-sm font-medium text-white bg-error-500 rounded-md hover:bg-error-700 focus:outline-none min-w-[100px]"
+                    onClick={handleDeleteOutlet}
+                  >
+                    Delete Outlet
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
