@@ -19,7 +19,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/outlets" element={<Outlets />} />
-          <Route path="/view-outlet" element={<ViewOutlet />} />
+          <Route path="/view-outlet/:outletId" element={<ViewOutlet />} />
           {/* Add other protected routes here */}
         </Route>
       </Routes>

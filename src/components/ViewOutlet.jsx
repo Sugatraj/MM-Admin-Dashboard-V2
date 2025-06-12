@@ -9,10 +9,12 @@ import {
   faUserGroup,
   faUserGear,
 } from "@fortawesome/free-solid-svg-icons";
+import { useParams } from 'react-router-dom';
 
 function ViewOutlet() {
   const { getToken } = useAuth();
   const { adminData } = useAdmin();
+  const { outletId } = useParams();
   const [outletData, setOutletData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -25,7 +27,7 @@ function ViewOutlet() {
       const response = await axios.post(
         "https://men4u.xyz/v2/common/view_outlet",
         {
-          outlet_id: 1, // This should come from route params or props
+          outlet_id: outletId,
           user_id: adminData?.user_id,
           app_source: "admin_dashboard",
         },
@@ -49,10 +51,10 @@ function ViewOutlet() {
   };
 
   useEffect(() => {
-    if (adminData?.user_id) {
+    if (adminData?.user_id && outletId) {
       fetchOutletDetails();
     }
-  }, [adminData?.user_id]); // This ensures the API is called only once when adminData is available
+  }, [adminData?.user_id, outletId]);
 
   return (
     <>

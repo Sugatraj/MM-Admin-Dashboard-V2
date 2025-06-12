@@ -9,6 +9,7 @@ import { useAuth } from "../hooks/useAuth";
 import { useAdmin } from "../hooks/useAdmin";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
 
 const transactionsData = [
   {
@@ -113,8 +114,10 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-const TableRow = ({ outlet }) => {
+const TableRow = ({ outlet, handleViewOutlet }) => {
   const [showDropdown, setShowDropdown] = useState(false);
+  console.log(outlet);
+  console.log(handleViewOutlet);
 
   return (
     <tr>
@@ -178,6 +181,7 @@ const TableRow = ({ outlet }) => {
           <button 
             className="w-8 h-8 flex items-center justify-center text-white bg-brand-500 hover:bg-brand-600 rounded-lg shadow-theme-xs transition"
             title="View Details"
+            onClick={() => handleViewOutlet(outlet.id)}
           >
             <FontAwesomeIcon icon={faEye} className="w-4 h-4" />
           </button>
@@ -264,6 +268,7 @@ function Outlets() {
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredData, setFilteredData] = useState([]);
   const itemsPerPage = 5;
+  const navigate = useNavigate();
 
   // Transform outlet data to match UI structure
   const transformOutletData = (outlets) => {
@@ -367,6 +372,11 @@ function Outlets() {
     { label: "Actions", key: "actions" },
   ];
 
+  // Add this function to handle view button click
+  const handleViewOutlet = (outletId) => {
+    navigate(`/view-outlet/${outletId}`);
+  };
+
   return (
     <div className="border-t border-gray-100 p-5 sm:p-6 dark:border-gray-800">
       <div className="rounded-2xl border border-gray-200 bg-white pt-4 dark:border-gray-800 dark:bg-white/[0.03]">
@@ -434,7 +444,11 @@ function Outlets() {
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
               {getCurrentItems().map((outlet) => (
-                <TableRow key={outlet.id} outlet={outlet} />
+                <TableRow 
+                  key={outlet.id} 
+                  outlet={outlet} 
+                  handleViewOutlet={handleViewOutlet}
+                />
               ))}
             </tbody>
           </table>
