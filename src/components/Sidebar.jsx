@@ -14,6 +14,8 @@ import {
   faChevronDown,
   faSignOut,
   faEllipsis,
+  faUserShield,
+  faList
 } from "@fortawesome/free-solid-svg-icons";
 
 // Import your logo images
@@ -57,8 +59,8 @@ const menuData = {
       title: "Access Control",
       icon: faLock,
       items: [
-        { name: "Roles", path: "/roles" },
-        { name: "Functionalities", path: "/functionalities" },
+        { name: "Roles", path: "/roles", icon: faUserShield },
+        { name: "Functionalities", path: "/functionalities",  icon: faList },
       ],
     },
     {
@@ -214,6 +216,14 @@ const Sidebar = ({ sidebarToggle = false }) => {
                         : "menu-dropdown-item-inactive"
                     }`}
                   >
+                    <FontAwesomeIcon
+                      icon={item.icon}
+                      className={`menu-item-icon ${
+                        isActive
+                          ? "menu-item-icon-active"
+                          : "menu-item-icon-inactive"
+                      }`}
+                    />
                     {subItem.name}
                     {(subItem.pro || subItem.new) && (
                       <span className="absolute right-3 flex items-center gap-1">
