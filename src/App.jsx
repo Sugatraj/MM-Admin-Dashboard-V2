@@ -7,6 +7,7 @@ import Profile from './components/Profile';
 import Outlets from './components/Outlets';
 import ViewOutlet from './components/ViewOutlet';
 import EditOutlet from './components/EditOutlet';
+import Owners from './components/Owners';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/outlets" element={<Outlets />} />
           <Route path="/view-outlet/:outletId" element={<ViewOutlet />} />
           <Route path="/edit-outlet/:outletId" element={<EditOutlet />} />
+          <Route path="/owners" element={<Owners />} />
           {/* Add other protected routes here */}
         </Route>
       </Routes>
