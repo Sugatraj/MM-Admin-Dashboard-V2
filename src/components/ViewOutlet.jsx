@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../hooks/useAuth";
 import { useAdmin } from "../hooks/useAdmin";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUserTie } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserTie, faUtensils, faUserGroup, faUserGear } from "@fortawesome/free-solid-svg-icons";
 
 function ViewOutlet() {
   const { getToken } = useAuth();
@@ -95,100 +95,93 @@ function ViewOutlet() {
           </nav>
         </div>
         <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
-            <h2
-              class="text-xl font-semibold text-gray-800 dark:text-white/90"
-              x-text="pageName"
-            >
-              Manage Staff Details
-            </h2>
-          </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 xl:grid-cols-4">  
-          {/* Metric Item Start */}
-          <div className="rounded-2xl border border-gray-200 bg-white p-5 my-4 dark:border-gray-800 dark:bg-white/[0.03]">
+          <h2
+            class="text-xl font-semibold text-gray-800 dark:text-white/90"
+            x-text="pageName"
+          >
+            Manage Staff Details
+          </h2>
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 xl:grid-cols-4">
+          {/* Waiters Metric */}
+          <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="h-12 w-12 flex items-center justify-center rounded-full bg-brand-50 dark:bg-brand-500/15">
-                  <FontAwesomeIcon 
-                    icon={faUserTie} 
+                  <FontAwesomeIcon
+                    icon={faUserTie}
                     className="h-6 w-6 text-brand-500 dark:text-brand-400"
                   />
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 dark:text-gray-400">Waiters</p>
                   <h4 className="text-xl font-bold text-gray-800 dark:text-white/90">
-                    2
+                    {outletData?.waiter_count}
                   </h4>
                 </div>
               </div>
             </div>
           </div>
-          {/* Metric Item End */}
-          {/* Metric Item Start */}
+
+          {/* Chefs Metric */}
           <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
-            <p className="text-theme-sm text-gray-500 dark:text-gray-400">
-              Total Pageviews
-            </p>
-            <div className="mt-3 flex items-end justify-between">
-              <div>
-                <h4 className="text-2xl font-bold text-gray-800 dark:text-white/90">
-                  55.9K
-                </h4>
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="flex items-center gap-1 rounded-full bg-success-50 px-2 py-0.5 text-theme-xs font-medium text-success-600 dark:bg-success-500/15 dark:text-success-500">
-                  +4%
-                </span>
-                <span className="text-theme-xs text-gray-500 dark:text-gray-400">
-                  Vs last month
-                </span>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 flex items-center justify-center rounded-full bg-brand-50 dark:bg-brand-500/15">
+                  <FontAwesomeIcon
+                    icon={faUtensils}
+                    className="h-6 w-6 text-brand-500 dark:text-brand-400"
+                  />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Chefs</p>
+                  <h4 className="text-xl font-bold text-gray-800 dark:text-white/90">
+                    {outletData?.chef_count}
+                  </h4>
+                </div>
               </div>
             </div>
           </div>
-          {/* Metric Item End */}
-          {/* Metric Item Start */}
+
+          {/* Captains Metric */}
           <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
-            <p className="text-theme-sm text-gray-500 dark:text-gray-400">
-              Bounce Rate
-            </p>
-            <div className="mt-3 flex items-end justify-between">
-              <div>
-                <h4 className="text-2xl font-bold text-gray-800 dark:text-white/90">
-                  54%
-                </h4>
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="flex items-center gap-1 rounded-full bg-error-50 px-2 py-0.5 text-theme-xs font-medium text-error-600 dark:bg-error-500/15 dark:text-error-500">
-                  -1.59%
-                </span>
-                <span className="text-theme-xs text-gray-500 dark:text-gray-400">
-                  Vs last month
-                </span>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 flex items-center justify-center rounded-full bg-brand-50 dark:bg-brand-500/15">
+                  <FontAwesomeIcon
+                    icon={faUserGroup}
+                    className="h-6 w-6 text-brand-500 dark:text-brand-400"
+                  />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Captains</p>
+                  <h4 className="text-xl font-bold text-gray-800 dark:text-white/90">
+                    {outletData?.captain_count}
+                  </h4>
+                </div>
               </div>
             </div>
           </div>
-          {/* Metric Item End */}
-          {/* Metric Item Start */}
+
+          {/* Managers Metric */}
           <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
-            <p className="text-theme-sm text-gray-500 dark:text-gray-400">
-              Visit Duration
-            </p>
-            <div className="mt-3 flex items-end justify-between">
-              <div>
-                <h4 className="text-2xl font-bold text-gray-800 dark:text-white/90">
-                  2m 56s
-                </h4>
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="flex items-center gap-1 rounded-full bg-success-50 px-2 py-0.5 text-theme-xs font-medium text-success-600 dark:bg-success-500/15 dark:text-success-500">
-                  +7%
-                </span>
-                <span className="text-theme-xs text-gray-500 dark:text-gray-400">
-                  Vs last month
-                </span>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 flex items-center justify-center rounded-full bg-brand-50 dark:bg-brand-500/15">
+                  <FontAwesomeIcon
+                    icon={faUserGear}
+                    className="h-6 w-6 text-brand-500 dark:text-brand-400"
+                  />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Managers</p>
+                  <h4 className="text-xl font-bold text-gray-800 dark:text-white/90">
+                    {outletData?.manager_count}
+                  </h4>
+                </div>
               </div>
             </div>
           </div>
-          {/* Metric Item End */}
         </div>
       </div>
     </>
