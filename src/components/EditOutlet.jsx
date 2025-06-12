@@ -89,7 +89,7 @@ function EditOutlet() {
           outlet_status: data.outlet_status === 1,
           upi_id: data.upi_id,
           website: data.website || '',
-          whatsapp: data.whatsapp || '',
+          whatsapp: data.whatsapp?.replace(/\D/g, '') || '',
           facebook: data.facebook || '',
           instagram: data.instagram || '',
           google_business_link: data.google_business_link || '',
@@ -132,10 +132,20 @@ function EditOutlet() {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
+    
+    if (name === 'whatsapp') {
+      // Only allow numbers and limit to 10 digits
+      const numbersOnly = value.replace(/[^0-9]/g, '');
+      setFormData(prev => ({
+        ...prev,
+        [name]: numbersOnly.slice(0, 10)
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: type === 'checkbox' ? checked : value
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -146,32 +156,51 @@ function EditOutlet() {
         throw new Error('No authentication token available');
       }
 
-      // Convert boolean values to integers for API
+      // Prepare API data with exact field names and format
       const apiData = {
-        ...formData,
+        outlet_id: parseInt(outletId),
+        user_id: parseInt(formData.user_id),         
+        name: formData.name,
+        outlet_type: formData.outlet_type,
+        fssainumber: formData.fssainumber,
+        gstnumber: formData.gstnumber,
+        mobile: formData.mobile,
+        veg_nonveg: formData.veg_nonveg,
+        service_charges: formData.service_charges.toString(),  // Convert to string
+        gst: formData.gst.toString(),  // Convert to string
+        address: formData.address,
         is_open: formData.is_open ? 1 : 0,
-        outlet_status: formData.outlet_status ? 1 : 0
+        outlet_status: formData.outlet_status ? 1 : 0,
+        upi_id: formData.upi_id,
+        website: formData.website || '',
+        whatsapp: formData.whatsapp || '',  // This will be the 10-digit number
+        facebook: formData.facebook || '',
+        instagram: formData.instagram || '',
+        google_business_link: formData.google_business_link || '',
+        google_review: formData.google_review || '',
+        app_source: "admin_dashboard"
       };
 
-      const response = await fetch('https://men4u.xyz/v2/common/update_outlet', {
-        method: 'PATCH',
-        headers: {
-          'Authorization': token,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(apiData)
-      });
+      const response = await axios.patch(
+        'https://men4u.xyz/v2/common/update_outlet',
+        apiData,
+        {
+          headers: {
+            'Authorization': token,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
 
-      if (!response.ok) {
+      if (response.data.detail === "Outlet information updated successfully") {
+        alert('Outlet updated successfully');
+        navigate(-1);
+      } else {
         throw new Error('Failed to update outlet');
       }
-
-      const result = await response.json();
-      alert(result.detail);
-      navigate(-1);
     } catch (error) {
       console.error('Error updating outlet:', error);
-      alert('Failed to update outlet');
+      alert(error.response?.data?.detail || 'Failed to update outlet');
     }
   };
 
@@ -450,14 +479,16 @@ function EditOutlet() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                WhatsApp
+                WhatsApp Number
               </label>
               <input
-                type="url"
+                type="tel"
                 name="whatsapp"
                 value={formData.whatsapp}
                 onChange={handleInputChange}
-                placeholder="https://wa.me/yournumber"
+                placeholder="Enter 10 digit mobile number"
+                pattern="[0-9]{10}"
+                maxLength={10}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
@@ -563,14 +594,20 @@ function EditOutlet() {
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="inline-flex items-center gap-2 px-4 py-3 text-sm font-medium text-gray-700 transition rounded-lg border border-gray-300 hover:bg-gray-50"
           >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
             Cancel
           </button>
           <button
             type="submit"
-            className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="inline-flex items-center gap-2 px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
           >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+            </svg>
             Save Changes
           </button>
         </div>
