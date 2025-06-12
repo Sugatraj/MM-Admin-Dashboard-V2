@@ -221,7 +221,7 @@ function ViewOutlet() {
                     Menus
                   </p>
                   <h4 className="text-xl font-bold text-gray-800 dark:text-white/90">
-                    {outletData?.waiter_count}
+                    {outletData?.total_menu}
                   </h4>
                 </div>
               </div>
@@ -243,7 +243,7 @@ function ViewOutlet() {
                     Categories
                   </p>
                   <h4 className="text-xl font-bold text-gray-800 dark:text-white/90">
-                    {outletData?.chef_count}
+                    {outletData?.total_category}
                   </h4>
                 </div>
               </div>
@@ -265,7 +265,7 @@ function ViewOutlet() {
                     Sections
                   </p>
                   <h4 className="text-xl font-bold text-gray-800 dark:text-white/90">
-                    {outletData?.captain_count}
+                    {outletData?.section_count}
                   </h4>
                 </div>
               </div>
@@ -287,7 +287,7 @@ function ViewOutlet() {
                     Orders
                   </p>
                   <h4 className="text-xl font-bold text-gray-800 dark:text-white/90">
-                    {outletData?.manager_count}
+                    {outletData?.orders_count}
                   </h4>
                 </div>
               </div>
@@ -307,7 +307,7 @@ function ViewOutlet() {
                     Tables
                   </p>
                   <h4 className="text-xl font-bold text-gray-800 dark:text-white/90">
-                    {outletData?.manager_count}
+                    {outletData?.table_count}
                   </h4>
                 </div>
               </div>
