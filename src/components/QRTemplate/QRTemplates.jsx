@@ -18,6 +18,11 @@ function QRTemplates() {
     { id: 5, name: 'Hotel MK', position: 'Centre', filename: '4PTG6E249B.jpg' },
   ];
 
+  // Add handler for create template navigation
+  const handleCreateTemplate = () => {
+    navigate('/create-template');
+  };
+
   return (
     <div className="p-6">
       {/* Breadcrumb */}
@@ -40,7 +45,8 @@ function QRTemplates() {
           <h1 className="text-xl font-semibold">QR Templates</h1>
         </div>
         <button
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700"
+          onClick={handleCreateTemplate}
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-success-500 hover:bg-success-600 rounded-lg transition-colors duration-200"
         >
           + Create Template
         </button>
