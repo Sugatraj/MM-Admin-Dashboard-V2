@@ -71,7 +71,43 @@ function EditOwner() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your update API call here
+    try {
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token available');
+      }
+
+      // Make the PATCH request to update owner
+      const response = await axios.patch(
+        'https://men4u.xyz/v2/admin/update_owner',
+        {
+          update_user_id: adminData.user_id,  // admin's user_id
+          user_id: parseInt(ownerId),         // owner's ID from URL params
+          name: formData.name,
+          mobile: formData.mobile,
+          address: formData.address,
+          aadhar_number: formData.aadhar_number,
+          dob: formData.dob,
+          email: formData.email,
+          account_type: 'test',              
+          functionality_ids: [] 
+        },
+        {
+          headers: {
+            Authorization: token,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (response.data.detail === "Owner updated successfully") {
+        alert('Owner updated successfully');
+        navigate(-1);
+      }
+    } catch (error) {
+      console.error('Error updating owner:', error);
+      alert(error.response?.data?.detail || 'Error updating owner');
+    }
   };
 
   if (isLoading) {
