@@ -10,7 +10,7 @@ import EditOutlet from './components/EditOutlet';
 import Owners from './components/Owners';
 import OwnerDetails from './components/OwnerDetails';
 import EditOwner from './components/EditOwner';
-
+import CreateOwner from './components/CreateOwner';
 function App() {
   return (
     <BrowserRouter>
@@ -28,6 +28,7 @@ function App() {
           <Route path="/owners" element={<Owners />} />
           <Route path="/owner-details/:ownerId" element={<OwnerDetails />} />
           <Route path="/edit-owner/:ownerId" element={<EditOwner />} />
+          <Route path="/create-owner" element={<CreateOwner />} />
           {/* Add other protected routes here */}
         </Route>
       </Routes>
