@@ -147,13 +147,30 @@ const TableRow = ({ outlet }) => {
       <td className="px-5 py-3 whitespace-nowrap sm:px-6">
         <div className="flex items-center justify-center">
           <p className="text-theme-sm text-gray-700 dark:text-gray-400">
-            {outlet.accountType}
+            {outlet.accountType.charAt(0).toUpperCase() + outlet.accountType.slice(1)}
           </p>
         </div>
       </td>
       <td className="px-5 py-3 whitespace-nowrap sm:px-6">
         <div className="flex items-center justify-center">
-          <StatusBadge status={outlet.status} />
+          <p className={`text-theme-sm rounded-full px-2 py-0.5 font-medium ${
+            outlet.isOpen === 1 
+              ? 'bg-success-50 text-success-600 dark:bg-success-500/15 dark:text-success-500'
+              : 'bg-error-50 text-error-600 dark:bg-error-500/15 dark:text-error-500'
+          }`}>
+            {outlet.isOpen === 1 ? 'Open' : 'Close'}
+          </p>
+        </div>
+      </td>
+      <td className="px-5 py-3 whitespace-nowrap sm:px-6">
+        <div className="flex items-center justify-center">
+          <p className={`text-theme-sm rounded-full px-2 py-0.5 font-medium ${
+            outlet.outletStatus === 1 
+              ? 'bg-success-50 text-success-600 dark:bg-success-500/15 dark:text-success-500'
+              : 'bg-error-50 text-error-600 dark:bg-error-500/15 dark:text-error-500'
+          }`}>
+            {outlet.outletStatus === 1 ? 'Active' : 'Inactive'}
+          </p>
         </div>
       </td>
       <td className="px-5 py-3 whitespace-nowrap sm:px-6">
@@ -248,12 +265,14 @@ function Outlets() {
   const transformOutletData = (outlets) => {
     return outlets.map((outlet) => ({
       id: outlet.outlet_id,
-      name: outlet.outlet_name, // Outlet name
-      code: outlet.outlet_code, // Outlet code
-      mobile: outlet.mobile, // Mobile number
+      name: outlet.outlet_name,
+      code: outlet.outlet_code,
+      mobile: outlet.mobile,
       status: getOutletStatus(outlet.outlet_status, outlet.is_open),
-      image: brand02, // Keep default image for now
-      accountType: outlet.account_type, // Account type
+      isOpen: outlet.is_open,
+      outletStatus: outlet.outlet_status,
+      image: brand02,
+      accountType: outlet.account_type,
     }));
   };
 
@@ -333,13 +352,14 @@ function Outlets() {
     setCurrentPage(pageNumber);
   };
 
-  // Update table headers to match new data structure
+  // Update table headers
   const tableHeaders = [
     { label: "Outlet Name", key: "name" },
     { label: "Outlet Code", key: "code" },
     { label: "Mobile", key: "mobile" },
     { label: "Account Type", key: "accountType" },
-    { label: "Status", key: "status" },
+    { label: "Open/Close", key: "isOpen" },
+    { label: "Status", key: "outletStatus" },
     { label: "Actions", key: "actions" },
   ];
 
