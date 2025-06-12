@@ -209,6 +209,46 @@ const TableRow = ({ outlet, handleViewOutlet, handleEditOutlet }) => {
 };
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+  // Generate page numbers array dynamically
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    const maxPagesToShow = 5; // Show max 5 page numbers at a time
+    
+    if (totalPages <= maxPagesToShow) {
+      // If total pages are less than or equal to maxPagesToShow, show all pages
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      // Always show first page
+      pageNumbers.push(1);
+      
+      // Calculate start and end of middle pages
+      let start = Math.max(2, currentPage - 1);
+      let end = Math.min(totalPages - 1, currentPage + 1);
+      
+      // Add ellipsis after first page if needed
+      if (start > 2) {
+        pageNumbers.push('...');
+      }
+      
+      // Add middle pages
+      for (let i = start; i <= end; i++) {
+        pageNumbers.push(i);
+      }
+      
+      // Add ellipsis before last page if needed
+      if (end < totalPages - 1) {
+        pageNumbers.push('...');
+      }
+      
+      // Always show last page
+      pageNumbers.push(totalPages);
+    }
+    
+    return pageNumbers;
+  };
+
   return (
     <div className="border-t border-gray-200 px-6 py-4 dark:border-gray-800">
       <div className="flex items-center justify-between">
@@ -225,7 +265,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         </span>
 
         <ul className="hidden items-center gap-0.5 sm:flex">
-          {[1, 2, 3, "...", 8, 9, 10].map((page, index) => (
+          {getPageNumbers().map((page, index) => (
             <li key={index}>
               <a
                 href="#"
@@ -268,7 +308,7 @@ function Outlets() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredData, setFilteredData] = useState([]);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
   const navigate = useNavigate();
 
   // Transform outlet data to match UI structure
