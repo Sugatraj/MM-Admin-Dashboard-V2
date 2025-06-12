@@ -7,6 +7,7 @@ function CreateOutlet() {
   const navigate = useNavigate();
   const { getToken } = useAuth();
   const [outletTypes, setOutletTypes] = useState({});
+  const [foodTypes, setFoodTypes] = useState({});
   
   const [formData, setFormData] = useState({
     name: '',
@@ -37,6 +38,7 @@ function CreateOutlet() {
 
   useEffect(() => {
     fetchOutletTypes();
+    fetchFoodTypes();
   }, []);
 
   const fetchOutletTypes = async () => {
@@ -60,6 +62,30 @@ function CreateOutlet() {
       }
     } catch (error) {
       console.error('Error fetching outlet types:', error);
+    }
+  };
+
+  const fetchFoodTypes = async () => {
+    try {
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token available');
+      }
+
+      const response = await axios.get(
+        'https://men4u.xyz/v2/common/get_food_type_list',
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+
+      if (response.data.food_type_list) {
+        setFoodTypes(response.data.food_type_list);
+      }
+    } catch (error) {
+      console.error('Error fetching food types:', error);
     }
   };
 
@@ -232,9 +258,11 @@ function CreateOutlet() {
                   required
                 >
                   <option value="">Select Food Type</option>
-                  <option value="veg">Veg</option>
-                  <option value="nonveg">Non-Veg</option>
-                  <option value="both">Both</option>
+                  {Object.entries(foodTypes).map(([key, value]) => (
+                    <option key={key} value={key}>
+                      {value.charAt(0).toUpperCase() + value.slice(1)}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
