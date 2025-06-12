@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import axios from 'axios';
 
 function CreateOutlet() {
   const navigate = useNavigate();
+  const { getToken } = useAuth();
+  const [outletTypes, setOutletTypes] = useState({});
   
   const [formData, setFormData] = useState({
     name: '',
@@ -30,6 +34,34 @@ function CreateOutlet() {
 
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+
+  useEffect(() => {
+    fetchOutletTypes();
+  }, []);
+
+  const fetchOutletTypes = async () => {
+    try {
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token available');
+      }
+
+      const response = await axios.get(
+        'https://men4u.xyz/v2/common/get_outlet_type',
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+
+      if (response.data.detail === "Successfully retrieved outlet types") {
+        setOutletTypes(response.data.outlet_type_list);
+      }
+    } catch (error) {
+      console.error('Error fetching outlet types:', error);
+    }
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -180,9 +212,11 @@ function CreateOutlet() {
                   required
                 >
                   <option value="">Select Outlet Type</option>
-                  <option value="restaurant">Restaurant</option>
-                  <option value="mess">Mess</option>
-                  <option value="cafe">Cafe</option>
+                  {Object.entries(outletTypes).map(([key, value]) => (
+                    <option key={key} value={key}>
+                      {value.charAt(0).toUpperCase() + value.slice(1).replace(/_/g, ' ')}
+                    </option>
+                  ))}
                 </select>
               </div>
 
