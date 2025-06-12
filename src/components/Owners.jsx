@@ -10,6 +10,8 @@ function Owners() {
   const [owners, setOwners] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [ownerToDelete, setOwnerToDelete] = useState(null);
 
   useEffect(() => {
     if (adminData?.user_id) {
@@ -48,6 +50,41 @@ function Owners() {
 
   const handleEditOwner = (owner_id) => {
     navigate(`/edit-owner/${owner_id}`);
+  };
+
+  const handleDeleteOwner = async () => {
+    try {
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token available');
+      }
+
+      await axios.delete(
+        'https://men4u.xyz/v2/admin/delete_owner',
+        {
+          data: {
+            owner_id: ownerToDelete,
+            user_id: adminData.user_id
+          },
+          headers: {
+            Authorization: token,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      setShowDeleteModal(false);
+      setOwnerToDelete(null);
+      fetchOwners();
+      
+    } catch (error) {
+      console.error('Error deleting owner:', error);
+    }
+  };
+
+  const openDeleteModal = (owner_id) => {
+    setOwnerToDelete(owner_id);
+    setShowDeleteModal(true);
   };
 
   if (isLoading) {
@@ -133,6 +170,15 @@ function Owners() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                         </svg>
                       </button>
+                      <button 
+                        className="p-1 text-error-500 hover:bg-error-50 rounded"
+                        title="Delete Owner"
+                        onClick={() => openDeleteModal(owner.user_id)}
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -141,6 +187,69 @@ function Owners() {
           </table>
         </div>
       </div>
+
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+            onClick={() => {
+              setShowDeleteModal(false);
+              setOwnerToDelete(null);
+            }}
+          />
+          
+          {/* Modal Container */}
+          <div className="flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
+            {/* Modal Content */}
+            <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+              <div className="p-6">
+                {/* Modal Header */}
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0">
+                    <svg className="h-6 w-6 text-error-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-medium text-gray-900">
+                      Confirm Deletion
+                    </h3>
+                    <div className="mt-2">
+                      <p className="text-sm text-gray-500">
+                        Are you sure you want to delete this owner? This action
+                        cannot be undone. All data associated with this owner will
+                        be permanently removed.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Modal Footer */}
+                <div className="mt-6 flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowDeleteModal(false);
+                      setOwnerToDelete(null);
+                    }}
+                    className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDeleteOwner}
+                    className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-error-500 rounded-lg hover:bg-error-600 focus:outline-none"
+                  >
+                    Delete Owner
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
