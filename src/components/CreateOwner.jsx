@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import { useAdmin } from '../hooks/useAdmin';
+import axios from 'axios';
 
 function CreateOwner() {
   const navigate = useNavigate();
+  const { getToken } = useAuth();
+  const { adminData } = useAdmin();
   const [formData, setFormData] = useState({
     name: '',
     mobile: '',
@@ -20,9 +25,43 @@ function CreateOwner() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // API integration will be added here
+    
+    try {
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token available');
+      }
+
+      const payload = {
+        user_id: adminData.user_id,
+        name: formData.name,
+        mobile: formData.mobile,
+        email: formData.email,
+        address: formData.address,
+        aadhar_number: formData.aadhar_number,
+        dob: formData.dob,
+        functionality_ids: [1] // Default functionality ID
+      };
+
+      await axios.post(
+        'https://men4u.xyz/v2/admin/create_owner',
+        payload,
+        {
+          headers: {
+            Authorization: token,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      // Navigate back after successful creation
+      navigate(-1);
+      
+    } catch (error) {
+      console.error('Error creating owner:', error);
+    }
   };
 
   return (
