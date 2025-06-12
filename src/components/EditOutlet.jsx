@@ -39,10 +39,14 @@ function EditOutlet() {
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [outletTypes, setOutletTypes] = useState({});
+  const [foodTypes, setFoodTypes] = useState({});
 
   // Fetch outlet data when component mounts
   useEffect(() => {
     if (adminData?.user_id && outletId) {
+      fetchOutletTypes();
+      fetchFoodTypes();
       fetchOutletData();
     }
   }, [adminData?.user_id, outletId]);
@@ -108,8 +112,55 @@ function EditOutlet() {
       }
     } catch (error) {
       console.error('Error fetching outlet data:', error);
-      alert('Failed to fetch outlet details');
       navigate(-1);
+    }
+  };
+
+  const fetchOutletTypes = async () => {
+    try {
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token available');
+      }
+
+      const response = await axios.get(
+        'https://men4u.xyz/v2/common/get_outlet_type',
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+
+      if (response.data.detail === "Successfully retrieved outlet types") {
+        setOutletTypes(response.data.outlet_type_list);
+      }
+    } catch (error) {
+      console.error('Error fetching outlet types:', error);
+    }
+  };
+
+  const fetchFoodTypes = async () => {
+    try {
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token available');
+      }
+
+      const response = await axios.get(
+        'https://men4u.xyz/v2/common/get_food_type_list',
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+
+      if (response.data.food_type_list) {
+        setFoodTypes(response.data.food_type_list);
+      }
+    } catch (error) {
+      console.error('Error fetching food types:', error);
     }
   };
 
@@ -193,14 +244,12 @@ function EditOutlet() {
       );
 
       if (response.data.detail === "Outlet information updated successfully") {
-        alert('Outlet updated successfully');
         navigate(-1);
       } else {
         throw new Error('Failed to update outlet');
       }
     } catch (error) {
       console.error('Error updating outlet:', error);
-      alert(error.response?.data?.detail || 'Failed to update outlet');
     }
   };
 
@@ -322,9 +371,11 @@ function EditOutlet() {
                   required
                 >
                   <option value="">Select Outlet Type</option>
-                  <option value="restaurant">Restaurant</option>
-                  <option value="mess">Mess</option>
-                  <option value="cafe">Cafe</option>
+                  {Object.entries(outletTypes).map(([key, value]) => (
+                    <option key={key} value={key}>
+                      {value.charAt(0).toUpperCase() + value.slice(1).replace(/_/g, ' ')}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -340,9 +391,11 @@ function EditOutlet() {
                   required
                 >
                   <option value="">Select Food Type</option>
-                  <option value="veg">Veg</option>
-                  <option value="nonveg">Non-Veg</option>
-                  <option value="both">Both</option>
+                  {Object.entries(foodTypes).map(([key, value]) => (
+                    <option key={key} value={key}>
+                      {value.charAt(0).toUpperCase() + value.slice(1)}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
