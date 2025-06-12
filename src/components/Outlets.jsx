@@ -7,6 +7,8 @@ import brand15 from "../assets/images/brand/brand-15.svg";
 import axios from "axios";
 import { useAuth } from "../hooks/useAuth";
 import { useAdmin } from "../hooks/useAdmin";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const transactionsData = [
   {
@@ -174,25 +176,30 @@ const TableRow = ({ outlet }) => {
         </div>
       </td>
       <td className="px-5 py-3 whitespace-nowrap sm:px-6">
-        <div className="flex items-center justify-center justify-center">
-          <div className="relative">
-            <button
-              onClick={() => setShowDropdown(!showDropdown)}
-              className="text-gray-500 dark:text-gray-400"
-            >
-              <MoreIcon />
-            </button>
-            {showDropdown && (
-              <div className="shadow-theme-lg dark:bg-gray-dark fixed w-40 space-y-1 rounded-2xl border border-gray-200 bg-white p-2 dark:border-gray-800">
-                <button className="text-theme-xs flex w-full rounded-lg px-3 py-2 text-left font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300">
-                  View Details
-                </button>
-                <button className="text-theme-xs flex w-full rounded-lg px-3 py-2 text-left font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300">
-                  Edit Outlet
-                </button>
-              </div>
-            )}
-          </div>
+        <div className="flex items-center justify-center gap-2">
+          {/* View Button - Blue */}
+          <button 
+            className="p-2 text-white bg-brand-500 hover:bg-brand-600 rounded-lg shadow-theme-xs transition"
+            title="View Details"
+          >
+            <FontAwesomeIcon icon={faEye} className="w-4 h-4" />
+          </button>
+
+          {/* Edit Button - Green */}
+          <button 
+            className="p-2 text-white bg-warning-500 hover:bg-warning-600 rounded-lg shadow-theme-xs transition"
+            title="Edit Outlet"
+          >
+            <FontAwesomeIcon icon={faPenToSquare} className="w-4 h-4" />
+          </button>
+
+          {/* Delete Button - Red */}
+          <button 
+            className="p-2 text-white bg-error-500 hover:bg-error-500 rounded-lg shadow-theme-xs transition"
+            title="Delete Outlet"
+          >
+            <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
+          </button>
         </div>
       </td>
     </tr>
