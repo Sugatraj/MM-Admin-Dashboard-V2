@@ -393,7 +393,10 @@ function Outlets() {
           </div>
 
           
-          <button class="inline-flex items-center  px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
+          <button
+            onClick={() => navigate('/create-outlet')}
+            className="inline-flex items-center gap-2 px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
+          >
             <svg
               class="fill-current"
               width="20"

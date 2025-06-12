@@ -5,6 +5,7 @@ import PrivateRoute from './components/PrivateRoute';
 import Dashboard from './components/Dashboard';
 import Profile from './components/Profile';
 import Outlets from './components/Outlets';
+import CreateOutlet from './components/CreateOutlet';
 import ViewOutlet from './components/ViewOutlet';
 import EditOutlet from './components/EditOutlet';
 import Owners from './components/Owners';
@@ -23,6 +24,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/outlets" element={<Outlets />} />
+          <Route path="/create-outlet" element={<CreateOutlet />} />
           <Route path="/view-outlet/:outletId" element={<ViewOutlet />} />
           <Route path="/edit-outlet/:outletId" element={<EditOutlet />} />
           <Route path="/owners" element={<Owners />} />
