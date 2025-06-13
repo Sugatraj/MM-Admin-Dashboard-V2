@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from 'axios';
+import { useAuth } from '../hooks/useAuth';
+import { useAdmin } from '../hooks/useAdmin';
 import {
   faGrip,
   faStore,
@@ -138,6 +141,8 @@ const Sidebar = ({ sidebarToggle = false }) => {
   const [selected, setSelected] = useState("Dashboard");
   const [page, setPage] = useState("ecommerce");
   const navigate = useNavigate();
+  const { getToken } = useAuth();
+  const { adminData, clearAdmin } = useAdmin();
 
   const MenuGroup = ({ title, items }) => (
     <div>
@@ -251,8 +256,32 @@ const Sidebar = ({ sidebarToggle = false }) => {
     );
   };
 
-  const handleLogout = () => {
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        'https://men4u.xyz/v2/common/logout',
+        {
+          user_id: adminData.user_id,
+          role: adminData.role,
+          app: "admin_dashboard"
+        },
+        {
+          headers: {
+            Authorization: getToken(),
+          },
+        }
+      );
+
+      // Clear admin data from local storage
+      clearAdmin();
+      
+      // Navigate to login page
+      navigate('/');
+      
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // You might want to show an error toast/notification here
+    }
   };
 
   return (
@@ -294,7 +323,7 @@ const Sidebar = ({ sidebarToggle = false }) => {
         </nav>
       </div>
 
-      {/* Move the Logout Button to be fixed at bottom */}
+      {/* Updated Logout Button */}
       <div className="absolute bottom-0 left-0 right-0 px-5 py-4 bg-white border-t border-gray-200 dark:bg-black dark:border-gray-800">
         <button
           onClick={handleLogout}
