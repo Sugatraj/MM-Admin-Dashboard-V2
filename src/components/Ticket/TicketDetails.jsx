@@ -136,30 +136,29 @@ function TicketDetails() {
               </button>
               <h1 className="text-xl font-semibold">Ticket Details</h1>
             </div>
-            {ticket.status === 'resolved' && (
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-success-50 text-success-700 rounded-full">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span className="text-sm font-medium">Resolved</span>
-              </div>
-            )}
-          </div>
-
-          {/* Action buttons - only show when status is open */}
-          {ticket.status === 'open' && (
-            <div className="flex gap-2">
-              <button
-                className="inline-flex items-center gap-2 px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
-                onClick={() => handleChangeStatus('resolved')}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                Update Status
-              </button>
+            
+            {/* Conditional rendering of button or badge on the right side */}
+            <div>
+              {ticket.status === 'open' ? (
+                <button
+                  className="inline-flex items-center gap-2 px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
+                  onClick={() => handleChangeStatus('resolved')}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Update Status
+                </button>
+              ) : ticket.status === 'resolved' && (
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-success-50 text-success-700 rounded-full">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-sm font-medium">Resolved</span>
+                </div>
+              )}
             </div>
-          )}
+          </div>
 
           {/* Ticket Details Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
