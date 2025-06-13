@@ -16,6 +16,7 @@ import {
   faCircleInfo,
   faSignOutAlt
 } from '@fortawesome/free-solid-svg-icons';
+import { useAdmin } from '../hooks/useAdmin';
 
 // Import your logo images
 import logoLight from '../assets/images/logo/logo.svg';
@@ -28,6 +29,7 @@ const Header = ({ sidebarToggle, setSidebarToggle }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [notifying, setNotifying] = useState(true);
+  const { adminData } = useAdmin();
 
   const notifications = [
     {
@@ -42,6 +44,11 @@ const Header = ({ sidebarToggle, setSidebarToggle }) => {
     },
     // Add more notifications as needed
   ];
+
+  // Early return if no admin data
+  if (!adminData) {
+    return null;
+  }
 
   return (
     <header className="sticky top-0 z-99999 flex w-full border-gray-200 bg-white lg:border-b dark:border-gray-800 dark:bg-gray-900">
@@ -144,9 +151,11 @@ const Header = ({ sidebarToggle, setSidebarToggle }) => {
               onClick={() => setDropdownOpen(!dropdownOpen)}
             >
               <span className="mr-3 h-11 w-11 overflow-hidden rounded-full">
-                <img src={ownerImage} alt="User" />
+                <img src={ownerImage} alt={adminData.name} />
               </span>
-              <span className="text-theme-sm mr-1 block font-medium">Musharof</span>
+              <span className="text-theme-sm mr-1 block font-medium">
+                {adminData.name}
+              </span>
               <FontAwesomeIcon 
                 icon={faChevronDown} 
                 className={`stroke-gray-500 dark:stroke-gray-400 ${dropdownOpen ? 'rotate-180' : ''}`}
@@ -156,7 +165,36 @@ const Header = ({ sidebarToggle, setSidebarToggle }) => {
             {/* User Dropdown */}
             {dropdownOpen && (
               <div className="shadow-theme-lg dark:bg-gray-dark absolute right-0 mt-[17px] flex w-[260px] flex-col rounded-2xl border border-gray-200 bg-white p-3 dark:border-gray-800">
-                {/* Add user dropdown content here */}
+                <div className="mb-2 p-2">
+                  <h4 className="text-sm font-medium text-gray-800 dark:text-white/90">
+                    {adminData.name}
+                  </h4>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {adminData.email}
+                  </p>
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    Role: {adminData.role}
+                  </p>
+                </div>
+                <div className="h-px bg-gray-200 dark:bg-gray-700"></div>
+                <Link 
+                  to="/profile" 
+                  className="flex items-center gap-2 rounded-lg px-2 py-2 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  <FontAwesomeIcon icon={faUser} className="w-4 h-4" />
+                  View Profile
+                </Link>
+                <button 
+                  className="flex items-center gap-2 rounded-lg px-2 py-2 text-sm text-error-600 hover:bg-error-50 dark:text-error-500 dark:hover:bg-error-950"
+                  onClick={() => {
+                    // Add logout logic here
+                    setDropdownOpen(false);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faSignOutAlt} className="w-4 h-4" />
+                  Sign Out
+                </button>
               </div>
             )}
           </div>
