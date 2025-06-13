@@ -11,6 +11,7 @@ function Auth() {
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [verifyLoading, setVerifyLoading] = useState(false);
   const [isOtpSent, setIsOtpSent] = useState(false);
+  const [isOtpScreen, setIsOtpScreen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -274,9 +275,7 @@ function Auth() {
                 <a href="index.html" className="block mb-4">
                   <img src={Logo} alt="Logo" />
                 </a>
-                {/* <p className="text-center text-gray-400 dark:text-white/60">
-                  Free and Open-Source Tailwind CSS Admin Dashboard Template
-                </p> */}
+                <h2 className="text-2xl font-semibold mb-2 text-white">Admin Dashboard</h2>
               </div>
             </div>
           </div>
