@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 function Customer() {
   const { getToken } = useAuth();
@@ -16,6 +17,8 @@ function Customer() {
   // Outlet dropdown state
   const [outlets, setOutlets] = useState([]);
   const [selectedOutlet, setSelectedOutlet] = useState('');
+
+  const navigate = useNavigate();
 
   // Fetch outlets on mount
   useEffect(() => {
@@ -199,10 +202,16 @@ function Customer() {
                       <td className="px-4 py-2">{c.mobile}</td>
                       <td className="px-4 py-2">{c.order_count ?? '-'}</td>
                       <td className="px-4 py-2">
-                        <button className="bg-blue-500 hover:bg-blue-600 text-white rounded p-2">
+                        <button 
+                          onClick={() => navigate(`/customer-details/${c.user_id}`, { 
+                            state: { customerData: c }
+                          })}
+                          className="inline-flex items-center gap-2 px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
+                        >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
+                          View Details
                         </button>
                       </td>
                     </tr>
