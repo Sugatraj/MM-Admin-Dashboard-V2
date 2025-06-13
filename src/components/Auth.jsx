@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import authLogo from "../assets/images/logo/auth-logo.svg";
+import Logo from "../assets/images/logo/logo.png";
 import grid01 from "../assets/images/shape/grid-01.svg";
 
 function Auth() {
@@ -272,7 +272,7 @@ function Auth() {
 
               <div className="flex flex-col items-center max-w-xs">
                 <a href="index.html" className="block mb-4">
-                  <img src={authLogo} alt="Logo" />
+                  <img src={Logo} alt="Logo" />
                 </a>
                 {/* <p className="text-center text-gray-400 dark:text-white/60">
                   Free and Open-Source Tailwind CSS Admin Dashboard Template
