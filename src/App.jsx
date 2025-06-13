@@ -25,6 +25,8 @@ import EditTemplate from './components/QRTemplate/EditTemplate';
 import Tickets from './components/Ticket/Tickets';
 import TicketDetails from './components/Ticket/TicketDetails';
 import Search from './components/Search/Search';
+import Customer from './components/Customer/Customer';
+import CustomerDetails from './components/Customer/CustomerDetails';
 
 function App() {
   return (
@@ -58,6 +60,8 @@ function App() {
           <Route path="/tickets" element={<Tickets />} />
           <Route path="/ticket-details/:ticketId" element={<TicketDetails />} />
           <Route path="/search" element={<Search />} />
+          <Route path="/customer" element={<Customer />} />
+          <Route path="/customer-details/:customerId" element={<CustomerDetails />} />
           {/* Add other protected routes here */}
         </Route>
       </Routes>
