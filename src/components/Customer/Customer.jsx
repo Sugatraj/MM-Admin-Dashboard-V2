@@ -10,18 +10,56 @@ function Customer() {
   const [totalActive, setTotalActive] = useState(0);
   const [totalInactive, setTotalInactive] = useState(0);
   const [outletName, setOutletName] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // You can make outlet_id dynamic as needed
-  const outlet_id = 1;
+  // Outlet dropdown state
+  const [outlets, setOutlets] = useState([]);
+  const [selectedOutlet, setSelectedOutlet] = useState('');
 
+  // Fetch outlets on mount
   useEffect(() => {
-    fetchCustomers();
+    fetchOutlets();
     // eslint-disable-next-line
-  }, [outlet_id]);
+  }, []);
 
-  const fetchCustomers = async () => {
+  // Fetch customers when selectedOutlet changes
+  useEffect(() => {
+    if (selectedOutlet) {
+      fetchCustomers(selectedOutlet);
+    }
+    // eslint-disable-next-line
+  }, [selectedOutlet]);
+
+  const fetchOutlets = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.post(
+        'https://men4u.xyz/v2/common/listview_outlet',
+        {
+          user_id: 1, // You may want to make this dynamic
+          app_source: "admin_dashboard"
+        },
+        {
+          headers: {
+            Authorization: getToken(),
+          },
+        }
+      );
+      setOutlets(response.data.data || []);
+      // Optionally select the first outlet by default
+      if (response.data.data && response.data.data.length > 0) {
+        setSelectedOutlet(response.data.data[0].outlet_id);
+      }
+    } catch (err) {
+      setError(err.response?.data?.msg || 'Failed to fetch outlets');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchCustomers = async (outlet_id) => {
     setLoading(true);
     setError(null);
     try {
@@ -37,8 +75,6 @@ function Customer() {
       setCustomers(response.data.customers || []);
       setTotalCount(response.data.total_customers || 0);
       setOutletName(response.data.outlet_name || '');
-      // If your API provides active/inactive counts, set them here.
-      // For now, we'll just set totalActive = totalCount, totalInactive = 0 as a placeholder.
       setTotalActive(response.data.total_active || response.data.total_customers || 0);
       setTotalInactive(response.data.total_inactive || 0);
     } catch (err) {
@@ -62,6 +98,21 @@ function Customer() {
         <span>Home</span>
         <span>/</span>
         <span>Customers</span>
+      </div>
+
+      {/* Outlet Dropdown */}
+      <div className="mb-6 flex justify-center">
+        <select
+          className="w-full sm:w-64 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+          value={selectedOutlet}
+          onChange={e => setSelectedOutlet(e.target.value)}
+        >
+          {outlets.map((outlet) => (
+            <option key={outlet.outlet_id} value={outlet.outlet_id}>
+              {outlet.outlet_name} ({outlet.outlet_code})
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* Stats Cards */}
