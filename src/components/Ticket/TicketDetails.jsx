@@ -61,12 +61,30 @@ function TicketDetails() {
 
     setLoading(true);
     try {
-      // Add your message sending API call here
-      // After successful send, refresh the ticket details
-      await fetchTicketDetails();
+      // Make API call to continue chat with string values for user_id and ticket_id
+      await axios.post(
+        'https://men4u.xyz/v2/admin/continue_chat',
+        {
+          ticket_id: String(ticketId), // Convert to string
+          user_id: String(adminData?.user_id), // Convert to string
+          message: message.trim(),
+          flag: "1"  // For admin messages
+        },
+        {
+          headers: {
+            Authorization: getToken(),
+          }
+        }
+      );
+
+      // Clear the message input
       setMessage('');
+      
+      // Refresh ticket details to show new message
+      await fetchTicketDetails();
     } catch (error) {
       console.error('Failed to send message:', error);
+      // You might want to show an error message to the user here
     } finally {
       setLoading(false);
     }
