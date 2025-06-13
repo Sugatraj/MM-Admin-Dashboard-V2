@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function Tickets() {
   const { getToken } = useAuth();
@@ -11,6 +12,7 @@ function Tickets() {
   const [outlets, setOutlets] = useState([]);
   const [selectedOutlet, setSelectedOutlet] = useState(null);
   const [filteredTickets, setFilteredTickets] = useState([]);
+  const navigate = useNavigate();
 
   // Fetch outlets on component mount
   useEffect(() => {
@@ -121,6 +123,10 @@ function Tickets() {
       default:
         return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  const handleViewTicket = (ticketId) => {
+    navigate(`/ticket-details/${ticketId}`);  // Updated to match App.jsx route
   };
 
   return (
@@ -241,10 +247,14 @@ function Tickets() {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <button className="bg-blue-400 text-white p-1 rounded hover:bg-blue-500">
-                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                          <button 
+                            onClick={() => handleViewTicket(ticket.ticket_id)}
+                            className="inline-flex items-center gap-2 px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
+                          >
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                               <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                             </svg>
+                            View
                           </button>
                         </td>
                       </tr>

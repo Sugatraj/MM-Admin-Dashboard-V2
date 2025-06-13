@@ -23,6 +23,7 @@ import CreateTemplate from './components/QRTemplate/CreateTemplate';
 import TemplateDetails from './components/QRTemplate/TemplateDetails';
 import EditTemplate from './components/QRTemplate/EditTemplate';
 import Tickets from './components/Ticket/Tickets';
+import TicketDetails from './components/Ticket/TicketDetails';
 import Search from './components/Search/Search';
 
 function App() {
@@ -55,6 +56,7 @@ function App() {
           <Route path="/template-details/:templateId" element={<TemplateDetails />} />
           <Route path="/edit-template" element={<EditTemplate />} />
           <Route path="/tickets" element={<Tickets />} />
+          <Route path="/ticket-details/:ticketId" element={<TicketDetails />} />
           <Route path="/search" element={<Search />} />
           {/* Add other protected routes here */}
         </Route>
