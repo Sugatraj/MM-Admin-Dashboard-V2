@@ -117,54 +117,56 @@ function TicketDetails() {
     }
   };
 
-  // Update these helper functions
+  // Update the date formatting functions
   const formatMessageDate = (dateString) => {
     try {
-      // First try to parse the ISO date string
-      const date = new Date(dateString);
+      // Handle format "DD-MM-YYYY HH:mm AM/PM"
+      const [datePart, timePart] = dateString.split(' ');
+      const [day, month, year] = datePart.split('-');
+      
+      const date = new Date(`${year}-${month}-${day}`);
+      
       if (isNaN(date.getTime())) {
-        // If invalid, try to parse assuming dd/mm/yyyy format
-        const [day, month, year] = dateString.split('/');
-        return new Date(year, month - 1, day).toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric'
-        });
+        throw new Error('Invalid date');
       }
-      return date.toLocaleDateString('en-US', {
-        month: 'short',
+
+      return date.toLocaleDateString('en-US', { 
+        month: 'short', 
         day: 'numeric',
         year: 'numeric'
       });
     } catch (error) {
       console.error('Date parsing error:', error);
-      return dateString; // Return original string if parsing fails
+      return 'Invalid Date';
     }
   };
 
   const formatMessageTime = (dateString) => {
     try {
-      // First try to parse the ISO date string
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) {
-        // If invalid, try to parse the time portion assuming HH:mm format
-        const timeMatch = dateString.match(/(\d{1,2}):(\d{2})/);
-        if (timeMatch) {
-          const [hours, minutes] = timeMatch;
-          const formattedHours = hours % 12 || 12;
-          const ampm = hours >= 12 ? 'PM' : 'AM';
-          return `${formattedHours}:${minutes} ${ampm}`;
-        }
-        return dateString; // Return original if no time found
+      // Handle format "DD-MM-YYYY HH:mm AM/PM"
+      const [datePart, time, period] = dateString.split(' ');
+      
+      // If time and period exist, return them combined
+      if (time && period) {
+        return `${time} ${period}`;
       }
-      return date.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
-      });
+
+      // Fallback to original string if format doesn't match
+      return dateString;
     } catch (error) {
       console.error('Time parsing error:', error);
-      return dateString; // Return original string if parsing fails
+      return 'Invalid Time';
+    }
+  };
+
+  // For ticket creation date formatting
+  const formatTicketDate = (dateString) => {
+    try {
+      // Handle format "DD MMM YYYY HH:mm AM/PM"
+      return dateString; // Already in desired format, just return as is
+    } catch (error) {
+      console.error('Ticket date parsing error:', error);
+      return 'Invalid Date';
     }
   };
 
@@ -272,7 +274,7 @@ function TicketDetails() {
               </div>
               <div className="mb-4">
                 <label className="block text-sm text-gray-500">Created On</label>
-                <div className="text-lg">{ticket.created_on}</div>
+                <div className="text-lg">{formatTicketDate(ticket.created_on)}</div>
               </div>
               <div className="mb-4">
                 <label className="block text-sm text-gray-500">Created By</label>
