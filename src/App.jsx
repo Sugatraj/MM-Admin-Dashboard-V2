@@ -56,7 +56,7 @@ function App() {
           <Route path="/qr-templates" element={<QRTemplates />} />
           <Route path="/create-template" element={<CreateTemplate />} />
           <Route path="/template-details/:templateId" element={<TemplateDetails />} />
-          <Route path="/edit-template" element={<EditTemplate />} />
+          <Route path="/edit-template/:templateId" element={<EditTemplate />} />
           <Route path="/tickets" element={<Tickets />} />
           <Route path="/ticket-details/:ticketId" element={<TicketDetails />} />
           <Route path="/search" element={<Search />} />

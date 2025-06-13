@@ -155,7 +155,17 @@ function QRTemplates() {
               <div className="text-xs text-gray-400 mt-2">{template.image_name}</div>
             </div>
             <div className="p-4 border-t border-gray-100">
-              <h3 className="text-sm font-medium text-gray-900">{template.name}</h3>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-medium text-gray-900 truncate">{template.name}</h3>
+                <button
+                  onClick={() => navigate(`/edit-template/${template.qr_code_template_id}`)}
+                  className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>
+                </button>
+              </div>
               <div className="mt-2 space-y-1">
                 <div className="flex items-center text-xs">
                   <span className="text-gray-500">QR Position:</span>
