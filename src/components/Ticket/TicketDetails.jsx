@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import { useAdmin } from '../../hooks/useAdmin';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 
 function TicketDetails() {
   const { ticketId } = useParams();
   const navigate = useNavigate();
-  const { getToken } = useAuth();
+  const { getToken, authData } = useAuth();
+  const { adminData } = useAdmin();
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [ticket, setTicket] = useState(null);
   const [conversations, setConversations] = useState([]);
   const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [statusLoading, setStatusLoading] = useState(false);
+  const [statusError, setStatusError] = useState(null);
 
   useEffect(() => {
     fetchTicketDetails();
@@ -65,6 +70,33 @@ function TicketDetails() {
     }
   };
 
+  // --- Status Change Logic ---
+  const handleChangeStatus = async () => {
+    setStatusLoading(true);
+    setStatusError(null);
+    try {
+      await axios.patch(
+        'https://men4u.xyz/v2/admin/update_ticket_status',
+        {
+          ticket_id: ticketId,
+          user_id: adminData?.user_id,
+          status: 'resolved'
+        },
+        {
+          headers: {
+            Authorization: getToken(),
+          }
+        }
+      );
+      setShowModal(false);
+      await fetchTicketDetails();
+    } catch (error) {
+      setStatusError(error.response?.data?.msg || 'Failed to update status');
+    } finally {
+      setStatusLoading(false);
+    }
+  };
+
   if (loading && !ticket) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
@@ -102,15 +134,29 @@ function TicketDetails() {
               Back
             </button>
             <h1 className="text-2xl font-semibold">View</h1>
-            <button 
-              className="inline-flex items-center gap-2 px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-red-500 shadow-theme-xs hover:bg-red-600"
-              disabled={ticket.status === 'closed'}
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-              Close
-            </button>
+            <div className="flex gap-2">
+              {/* Show Change Status button if not resolved/closed */}
+              {(ticket.status !== 'resolved' && ticket.status !== 'closed') && (
+                <button
+                  className="inline-flex items-center gap-2 px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
+                  onClick={() => setShowModal(true)}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Mark as Resolved
+                </button>
+              )}
+              <button 
+                className="inline-flex items-center gap-2 px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-red-500 shadow-theme-xs hover:bg-red-600"
+                disabled={ticket.status === 'closed'}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                Close
+              </button>
+            </div>
           </div>
 
           {/* Ticket Details Grid */}
@@ -211,6 +257,48 @@ function TicketDetails() {
               </button>
             </form>
           </div>
+
+          {/* Confirm Modal */}
+          {showModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+              <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+                <h2 className="text-lg font-semibold mb-4">Confirm Status Change</h2>
+                <p>Are you sure you want to mark this ticket as <span className="font-semibold text-green-600">resolved</span>?</p>
+                {statusError && (
+                  <div className="text-red-500 mt-2">{statusError}</div>
+                )}
+                <div className="flex justify-end gap-2 mt-6">
+                  <button
+                    className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 text-gray-700"
+                    onClick={() => setShowModal(false)}
+                    disabled={statusLoading}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
+                    onClick={handleChangeStatus}
+                    disabled={statusLoading}
+                  >
+                    {statusLoading ? (
+                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                      </svg>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        Confirm
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
       </div>
     </div>
