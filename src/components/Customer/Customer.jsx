@@ -1,23 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useAuth } from '../../hooks/useAuth';
 
 function Customer() {
-  // Mock data for demonstration
+  const { getToken } = useAuth();
   const [search, setSearch] = useState('');
-  const customers = [
-    { name: 'Aaaaaaaaaaa', mobile: '6543216543', orderCount: '-' },
-    { name: 'Aaaaasdsa', mobile: '6666555555', orderCount: '-' },
-    { name: 'Abc', mobile: '9121212121', orderCount: '-' },
-    { name: 'Abc', mobile: '9826262626', orderCount: '-' },
-    { name: 'Abhijeet', mobile: '9146360163', orderCount: '-' },
-    { name: 'Abhishek', mobile: '8600704616', orderCount: '2' },
-    { name: 'Afas', mobile: '6464684651', orderCount: '-' },
-    { name: 'Afas', mobile: '6456456546', orderCount: '-' },
-    { name: 'Anil', mobile: '9767637798', orderCount: '1' },
-    { name: 'Arjun', mobile: '7777777777', orderCount: '1' },
-  ];
-  const totalCount = 104;
-  const totalActive = 96;
-  const totalInactive = 8;
+  const [customers, setCustomers] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalActive, setTotalActive] = useState(0);
+  const [totalInactive, setTotalInactive] = useState(0);
+  const [outletName, setOutletName] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // You can make outlet_id dynamic as needed
+  const outlet_id = 1;
+
+  useEffect(() => {
+    fetchCustomers();
+    // eslint-disable-next-line
+  }, [outlet_id]);
+
+  const fetchCustomers = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.post(
+        'https://men4u.xyz/v2/admin/customer_listview',
+        { outlet_id },
+        {
+          headers: {
+            Authorization: getToken(),
+          },
+        }
+      );
+      setCustomers(response.data.customers || []);
+      setTotalCount(response.data.total_customers || 0);
+      setOutletName(response.data.outlet_name || '');
+      // If your API provides active/inactive counts, set them here.
+      // For now, we'll just set totalActive = totalCount, totalInactive = 0 as a placeholder.
+      setTotalActive(response.data.total_active || response.data.total_customers || 0);
+      setTotalInactive(response.data.total_inactive || 0);
+    } catch (err) {
+      setError(err.response?.data?.msg || 'Failed to fetch customers');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Filtered customers for search
+  const filteredCustomers = customers.filter(
+    (c) =>
+      c.name?.toLowerCase().includes(search.toLowerCase()) ||
+      c.mobile?.includes(search)
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 py-6 px-4">
@@ -59,7 +95,9 @@ function Customer() {
           <button className="text-xs border border-gray-300 rounded px-3 py-1 text-gray-700 hover:bg-gray-100">
             &#8592; Back
           </button>
-          <h2 className="text-lg font-semibold text-center flex-grow -ml-16">Customers</h2>
+          <h2 className="text-lg font-semibold text-center flex-grow -ml-16">
+            Customers{outletName ? ` - ${outletName}` : ''}
+          </h2>
         </div>
         <div className="flex items-center justify-between mb-2">
           <div>
@@ -83,43 +121,50 @@ function Customer() {
             />
           </div>
         </div>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 text-sm">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-2 text-left font-medium text-gray-500">NAME</th>
-                <th className="px-4 py-2 text-left font-medium text-gray-500">MOBILE</th>
-                <th className="px-4 py-2 text-left font-medium text-gray-500">ORDER COUNT</th>
-                <th className="px-4 py-2 text-left font-medium text-gray-500">ACTIONS</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {customers
-                .filter(c =>
-                  c.name.toLowerCase().includes(search.toLowerCase()) ||
-                  c.mobile.includes(search)
-                )
-                .map((c, idx) => (
-                  <tr key={idx}>
-                    <td className="px-4 py-2">{c.name}</td>
-                    <td className="px-4 py-2">{c.mobile}</td>
-                    <td className="px-4 py-2">{c.orderCount}</td>
-                    <td className="px-4 py-2">
-                      <button className="bg-blue-500 hover:bg-blue-600 text-white rounded p-2">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      </button>
-                    </td>
+        {loading ? (
+          <div className="text-center py-8">Loading...</div>
+        ) : error ? (
+          <div className="text-center text-red-500 py-8">{error}</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200 text-sm">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-2 text-left font-medium text-gray-500">NAME</th>
+                  <th className="px-4 py-2 text-left font-medium text-gray-500">MOBILE</th>
+                  <th className="px-4 py-2 text-left font-medium text-gray-500">ORDER COUNT</th>
+                  <th className="px-4 py-2 text-left font-medium text-gray-500">ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredCustomers.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="text-center py-4 text-gray-400">No customers found.</td>
                   </tr>
-                ))}
-            </tbody>
-          </table>
-        </div>
+                ) : (
+                  filteredCustomers.map((c, idx) => (
+                    <tr key={c.customer_id || idx}>
+                      <td className="px-4 py-2">{c.name}</td>
+                      <td className="px-4 py-2">{c.mobile}</td>
+                      <td className="px-4 py-2">{c.order_count ?? '-'}</td>
+                      <td className="px-4 py-2">
+                        <button className="bg-blue-500 hover:bg-blue-600 text-white rounded p-2">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
         {/* Pagination */}
         <div className="flex items-center justify-between mt-4 text-sm">
           <div>
-            Showing 1 to 10 of {totalCount} entries
+            Showing 1 to {filteredCustomers.length} of {totalCount} entries
           </div>
           <div className="flex gap-1">
             <button className="px-3 py-1 border border-gray-300 rounded-md">Previous</button>
