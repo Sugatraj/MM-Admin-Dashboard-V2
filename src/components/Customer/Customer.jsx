@@ -1,9 +1,142 @@
-import React from 'react'
+import React, { useState } from 'react';
 
 function Customer() {
+  // Mock data for demonstration
+  const [search, setSearch] = useState('');
+  const customers = [
+    { name: 'Aaaaaaaaaaa', mobile: '6543216543', orderCount: '-' },
+    { name: 'Aaaaasdsa', mobile: '6666555555', orderCount: '-' },
+    { name: 'Abc', mobile: '9121212121', orderCount: '-' },
+    { name: 'Abc', mobile: '9826262626', orderCount: '-' },
+    { name: 'Abhijeet', mobile: '9146360163', orderCount: '-' },
+    { name: 'Abhishek', mobile: '8600704616', orderCount: '2' },
+    { name: 'Afas', mobile: '6464684651', orderCount: '-' },
+    { name: 'Afas', mobile: '6456456546', orderCount: '-' },
+    { name: 'Anil', mobile: '9767637798', orderCount: '1' },
+    { name: 'Arjun', mobile: '7777777777', orderCount: '1' },
+  ];
+  const totalCount = 104;
+  const totalActive = 96;
+  const totalInactive = 8;
+
   return (
-    <div>Customer</div>
-  )
+    <div className="min-h-screen bg-gray-50 py-6 px-4">
+      {/* Breadcrumb */}
+      <div className="text-sm text-gray-500 mb-4 flex items-center gap-2">
+        <span>Home</span>
+        <span>/</span>
+        <span>Customers</span>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="flex flex-wrap gap-4 mb-8 justify-center">
+        <div className="bg-white rounded-lg shadow p-6 flex flex-col items-center w-48">
+          <span className="text-2xl font-bold text-blue-600">{totalCount}</span>
+          <span className="text-gray-600 mt-1 flex items-center gap-1">
+            <svg className="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 10a4 4 0 100-8 4 4 0 000 8zM2 18a8 8 0 1116 0H2z" /></svg>
+            Total Count
+          </span>
+        </div>
+        <div className="bg-white rounded-lg shadow p-6 flex flex-col items-center w-48">
+          <span className="text-2xl font-bold text-green-600">{totalActive}</span>
+          <span className="text-gray-600 mt-1 flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-green-500 inline-block"></span>
+            Total Active
+          </span>
+        </div>
+        <div className="bg-white rounded-lg shadow p-6 flex flex-col items-center w-48">
+          <span className="text-2xl font-bold text-red-600">{totalInactive}</span>
+          <span className="text-gray-600 mt-1 flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-red-500 inline-block"></span>
+            Total Inactive
+          </span>
+        </div>
+      </div>
+
+      {/* Table Card */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <div className="flex items-center justify-between mb-4">
+          <button className="text-xs border border-gray-300 rounded px-3 py-1 text-gray-700 hover:bg-gray-100">
+            &#8592; Back
+          </button>
+          <h2 className="text-lg font-semibold text-center flex-grow -ml-16">Customers</h2>
+        </div>
+        <div className="flex items-center justify-between mb-2">
+          <div>
+            <label className="text-sm mr-2">Show</label>
+            <select className="border border-gray-300 rounded px-2 py-1 text-sm">
+              <option>10</option>
+              <option>25</option>
+              <option>50</option>
+              <option>100</option>
+            </select>
+            <span className="text-sm ml-2">entries</span>
+          </div>
+          <div>
+            <label className="text-sm mr-2">Search:</label>
+            <input
+              type="text"
+              className="border border-gray-300 rounded px-2 py-1 text-sm"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search..."
+            />
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200 text-sm">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-4 py-2 text-left font-medium text-gray-500">NAME</th>
+                <th className="px-4 py-2 text-left font-medium text-gray-500">MOBILE</th>
+                <th className="px-4 py-2 text-left font-medium text-gray-500">ORDER COUNT</th>
+                <th className="px-4 py-2 text-left font-medium text-gray-500">ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {customers
+                .filter(c =>
+                  c.name.toLowerCase().includes(search.toLowerCase()) ||
+                  c.mobile.includes(search)
+                )
+                .map((c, idx) => (
+                  <tr key={idx}>
+                    <td className="px-4 py-2">{c.name}</td>
+                    <td className="px-4 py-2">{c.mobile}</td>
+                    <td className="px-4 py-2">{c.orderCount}</td>
+                    <td className="px-4 py-2">
+                      <button className="bg-blue-500 hover:bg-blue-600 text-white rounded p-2">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+        {/* Pagination */}
+        <div className="flex items-center justify-between mt-4 text-sm">
+          <div>
+            Showing 1 to 10 of {totalCount} entries
+          </div>
+          <div className="flex gap-1">
+            <button className="px-3 py-1 border border-gray-300 rounded-md">Previous</button>
+            <button className="px-3 py-1 border border-gray-300 rounded-md bg-purple-600 text-white">1</button>
+            <button className="px-3 py-1 border border-gray-300 rounded-md">2</button>
+            <button className="px-3 py-1 border border-gray-300 rounded-md">3</button>
+            <span className="px-3 py-1">...</span>
+            <button className="px-3 py-1 border border-gray-300 rounded-md">11</button>
+            <button className="px-3 py-1 border border-gray-300 rounded-md">Next</button>
+          </div>
+        </div>
+      </div>
+      <div className="text-xs text-right text-gray-400 mt-4">
+        Powered By Shekru Labs India Pvt. Ltd.
+      </div>
+    </div>
+  );
 }
 
-export default Customer
+export default Customer;

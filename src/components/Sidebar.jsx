@@ -82,6 +82,12 @@ const menuData = {
       icon: faSearch,
     },
     {
+      title: "Customers",
+      path: "/customer",
+      id: "customer",
+      icon: faUser,
+    },
+    {
       title: "Tickets",
       path: "/tickets",
       id: "tickets",
