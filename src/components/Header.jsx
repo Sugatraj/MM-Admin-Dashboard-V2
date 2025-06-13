@@ -17,6 +17,9 @@ import {
   faSignOutAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { useAdmin } from '../hooks/useAdmin';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 // Import your logo images
 import logoLight from '../assets/images/logo/logo.svg';
@@ -29,7 +32,9 @@ const Header = ({ sidebarToggle, setSidebarToggle }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [notifying, setNotifying] = useState(true);
-  const { adminData } = useAdmin();
+  const { adminData, clearAdmin } = useAdmin();
+  const { getToken } = useAuth();
+  const navigate = useNavigate();
 
   const notifications = [
     {
@@ -44,6 +49,37 @@ const Header = ({ sidebarToggle, setSidebarToggle }) => {
     },
     // Add more notifications as needed
   ];
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        'https://men4u.xyz/v2/common/logout',
+        {
+          user_id: adminData.user_id,
+          role: adminData.role,
+          app: "admin_dashboard"
+        },
+        {
+          headers: {
+            Authorization: getToken(),
+          },
+        }
+      );
+
+      // Clear admin data from local storage
+      clearAdmin();
+      
+      // Close the dropdown
+      setDropdownOpen(false);
+
+      // Navigate to login page
+      navigate('/');
+      
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // You might want to show an error toast/notification here
+    }
+  };
 
   // Early return if no admin data
   if (!adminData) {
@@ -187,10 +223,7 @@ const Header = ({ sidebarToggle, setSidebarToggle }) => {
                 </Link>
                 <button 
                   className="flex items-center gap-2 rounded-lg px-2 py-2 text-sm text-error-600 hover:bg-error-50 dark:text-error-500 dark:hover:bg-error-950"
-                  onClick={() => {
-                    // Add logout logic here
-                    setDropdownOpen(false);
-                  }}
+                  onClick={handleLogout}
                 >
                   <FontAwesomeIcon icon={faSignOutAlt} className="w-4 h-4" />
                   Sign Out
