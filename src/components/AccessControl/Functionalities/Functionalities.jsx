@@ -17,6 +17,9 @@ function Functionalities() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingFunctionality, setEditingFunctionality] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletingFunctionality, setDeletingFunctionality] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchFunctionalities();
@@ -122,6 +125,38 @@ function Functionalities() {
     }
   };
 
+  const handleDeleteFunctionality = async () => {
+    try {
+      setIsDeleting(true);
+      setError(null);
+
+      const token = getToken();
+      if (!token) {
+        throw new Error('No authentication token available');
+      }
+
+      await axios.delete(
+        `https://men4u.xyz/v2/admin/delete_ubac_functionality/${deletingFunctionality.functionality_id}`,
+        {
+          headers: {
+            Authorization: token,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      // Refresh functionalities list
+      fetchFunctionalities();
+      setShowDeleteModal(false);
+      setDeletingFunctionality(null);
+    } catch (err) {
+      setError(err.response?.data?.detail || 'Failed to delete functionality');
+      console.error('Error deleting functionality:', err);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   // Filter functionalities based on search term
   const filteredFunctionalities = functionalities.filter(functionality => 
     functionality.functionality_name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -223,6 +258,10 @@ function Functionalities() {
                       Edit
                     </button>
                     <button
+                      onClick={() => {
+                        setDeletingFunctionality(functionality);
+                        setShowDeleteModal(true);
+                      }}
                       className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition rounded-lg bg-error-500 shadow-theme-xs hover:bg-error-600"
                     >
                       Delete
@@ -391,6 +430,71 @@ function Functionalities() {
                   </>
                 ) : (
                   'Update Functionality'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-medium text-gray-900">Delete Functionality</h3>
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setDeletingFunctionality(null);
+                  setError(null);
+                }}
+                className="text-gray-400 hover:text-gray-500 transition-colors"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </button>
+            </div>
+
+            {error && (
+              <div className="mb-4 p-3 text-sm text-red-500 bg-red-50 rounded-lg">
+                {error}
+              </div>
+            )}
+
+            <div className="mb-6">
+              <p className="text-sm text-gray-500">
+                Are you sure you want to delete the functionality "{deletingFunctionality?.functionality_name.replace(/_/g, ' ')}"? This action cannot be undone.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-end gap-3">
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setDeletingFunctionality(null);
+                  setError(null);
+                }}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                disabled={isDeleting}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteFunctionality}
+                disabled={isDeleting}
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition rounded-lg bg-error-500 shadow-theme-xs hover:bg-error-600 disabled:opacity-50"
+              >
+                {isDeleting ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    <span>Deleting...</span>
+                  </>
+                ) : (
+                  'Delete Functionality'
                 )}
               </button>
             </div>
