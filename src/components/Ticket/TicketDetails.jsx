@@ -117,6 +117,57 @@ function TicketDetails() {
     }
   };
 
+  // Update these helper functions
+  const formatMessageDate = (dateString) => {
+    try {
+      // First try to parse the ISO date string
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        // If invalid, try to parse assuming dd/mm/yyyy format
+        const [day, month, year] = dateString.split('/');
+        return new Date(year, month - 1, day).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric'
+        });
+      }
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+    } catch (error) {
+      console.error('Date parsing error:', error);
+      return dateString; // Return original string if parsing fails
+    }
+  };
+
+  const formatMessageTime = (dateString) => {
+    try {
+      // First try to parse the ISO date string
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        // If invalid, try to parse the time portion assuming HH:mm format
+        const timeMatch = dateString.match(/(\d{1,2}):(\d{2})/);
+        if (timeMatch) {
+          const [hours, minutes] = timeMatch;
+          const formattedHours = hours % 12 || 12;
+          const ampm = hours >= 12 ? 'PM' : 'AM';
+          return `${formattedHours}:${minutes} ${ampm}`;
+        }
+        return dateString; // Return original if no time found
+      }
+      return date.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+    } catch (error) {
+      console.error('Time parsing error:', error);
+      return dateString; // Return original string if parsing fails
+    }
+  };
+
   if (loading && !ticket) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
@@ -234,17 +285,63 @@ function TicketDetails() {
           <div>
             <h2 className="text-xl font-semibold mb-4">Conversation</h2>
             <div className="bg-gray-50 rounded-lg p-4 mb-4 h-96 overflow-y-auto">
-              {conversations.map((conv) => (
-                <div key={conv.ticket_chat_id} className="mb-4">
-                  <div className="flex items-center justify-between text-sm text-gray-500 mb-1">
-                    <span>{`${conv.user_name} (${conv.user_role})`}</span>
-                    <span>{conv.created_on}</span>
+              {conversations.reduce((messageGroups, conv, index) => {
+                const messageDate = formatMessageDate(conv.created_on);
+                const messageTime = formatMessageTime(conv.created_on);
+                const isAdmin = conv.user_role === 'admin';
+                
+                // Check if we need a new date header
+                if (index === 0 || messageDate !== formatMessageDate(conversations[index - 1].created_on)) {
+                  messageGroups.push(
+                    <div key={`date-${conv.ticket_chat_id}`} className="flex justify-center my-4">
+                      <div className="bg-gray-200 text-gray-600 text-xs px-3 py-1 rounded-full">
+                        {messageDate}
+                      </div>
+                    </div>
+                  );
+                }
+
+                // Add the message
+                messageGroups.push(
+                  <div key={conv.ticket_chat_id} className={`mb-4 ${isAdmin ? 'flex flex-col items-end' : 'flex flex-col items-start'}`}>
+                    <div 
+                      className={`max-w-[80%] relative group ${
+                        isAdmin ? 'bg-brand-500 text-white' : 'bg-white text-gray-800'
+                      } rounded-lg p-3 shadow-sm ${
+                        isAdmin ? 'rounded-tr-none' : 'rounded-tl-none'
+                      }`}
+                    >
+                      {/* Message content */}
+                      <p className="break-words mb-1">{conv.message}</p>
+                      
+                      {/* Time in bottom right/left */}
+                      <div 
+                        className={`text-xs ${
+                          isAdmin ? 'text-white/70' : 'text-gray-500'
+                        } mt-1 flex items-center gap-1`}
+                      >
+                        <span>{messageTime}</span>
+                        {isAdmin && (
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {/* User name - shown on hover */}
+                    <div 
+                      className={`text-xs text-gray-500 mt-1 opacity-0 group-hover:opacity-100 transition-opacity ${
+                        isAdmin ? 'text-right' : 'text-left'
+                      }`}
+                    >
+                      {conv.user_name}
+                    </div>
                   </div>
-                  <div className="bg-white rounded-lg p-3 shadow-sm">
-                    {conv.message}
-                  </div>
-                </div>
-              ))}
+                );
+
+                return messageGroups;
+              }, [])}
             </div>
 
             {/* Message Input */}
@@ -254,7 +351,7 @@ function TicketDetails() {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Enter your message..."
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
                 disabled={ticket.status === 'closed'}
               />
               <button
