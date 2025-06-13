@@ -3,6 +3,8 @@ import { useAuth } from '../../hooks/useAuth';
 import { useAdmin } from '../../hooks/useAdmin';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
 function TicketDetails() {
   const { ticketId } = useParams();
@@ -80,7 +82,7 @@ function TicketDetails() {
         {
           ticket_id: ticketId,
           user_id: adminData?.user_id,
-          status: 'resolved'
+          ticket_status: 'resolved'
         },
         {
           headers: {
@@ -124,40 +126,40 @@ function TicketDetails() {
         <div className="p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
-            <button
-              onClick={handleBack}
-              className="inline-flex items-center gap-2 px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              Back
-            </button>
-            <h1 className="text-2xl font-semibold">View</h1>
-            <div className="flex gap-2">
-              {/* Show Change Status button if not resolved/closed */}
-              {(ticket.status !== 'resolved' && ticket.status !== 'closed') && (
-                <button
-                  className="inline-flex items-center gap-2 px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
-                  onClick={() => setShowModal(true)}
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Mark as Resolved
-                </button>
-              )}
+            <div className="flex items-center gap-4">
               <button 
-                className="inline-flex items-center gap-2 px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-red-500 shadow-theme-xs hover:bg-red-600"
-                disabled={ticket.status === 'closed'}
+                onClick={() => navigate(-1)}
+                className="inline-flex items-center px-3 py-1.5 text-sm text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+              >
+                <FontAwesomeIcon icon={faChevronLeft} className="w-3 h-3 mr-1" />
+                Back
+              </button>
+              <h1 className="text-xl font-semibold">Ticket Details</h1>
+            </div>
+            {ticket.status === 'resolved' && (
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-success-50 text-success-700 rounded-full">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <span className="text-sm font-medium">Resolved</span>
+              </div>
+            )}
+          </div>
+
+          {/* Action buttons - only show when status is open */}
+          {ticket.status === 'open' && (
+            <div className="flex gap-2">
+              <button
+                className="inline-flex items-center gap-2 px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
+                onClick={() => handleChangeStatus('resolved')}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                Close
+                Update Status
               </button>
             </div>
-          </div>
+          )}
 
           {/* Ticket Details Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
